@@ -70,6 +70,25 @@ export interface WeddingDetails {
   food_info_ms: string;
   invitation_note_en: string;
   invitation_note_ms: string;
+  // New fields for formal invitation card
+  groom_title_en: string;
+  groom_title_ms: string;
+  bride_title_en: string;
+  bride_title_ms: string;
+  groom_father_name: string;
+  groom_mother_name: string;
+  bride_father_name: string;
+  bride_mother_name: string;
+  bismillah_text_en: string;
+  bismillah_text_ms: string;
+  with_pleasure_text_en: string;
+  with_pleasure_text_ms: string;
+  together_with_text_en: string;
+  together_with_text_ms: string;
+  invitation_message_en: string;
+  invitation_message_ms: string;
+  cordially_invite_text_en: string;
+  cordially_invite_text_ms: string;
   updated_at: string;
 }
 
@@ -265,6 +284,108 @@ if (hasOldSchema) {
   console.log('Migration completed!');
 }
 
+// Check if we need to add invitation card fields
+if (!hasOldSchema) {
+  // Check and add individual fields that are missing
+  const columnNames = tableInfo.map(col => col.name);
+  
+  try {
+    // Add each field if it doesn't exist
+    if (!columnNames.includes('groom_title_en')) {
+      console.log('Adding groom_title_en column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN groom_title_en TEXT DEFAULT ''`);
+    }
+    if (!columnNames.includes('groom_title_ms')) {
+      console.log('Adding groom_title_ms column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN groom_title_ms TEXT DEFAULT ''`);
+    }
+    if (!columnNames.includes('bride_title_en')) {
+      console.log('Adding bride_title_en column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN bride_title_en TEXT DEFAULT ''`);
+    }
+    if (!columnNames.includes('bride_title_ms')) {
+      console.log('Adding bride_title_ms column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN bride_title_ms TEXT DEFAULT ''`);
+    }
+    if (!columnNames.includes('groom_father_name')) {
+      console.log('Adding groom_father_name column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN groom_father_name TEXT DEFAULT ''`);
+    }
+    if (!columnNames.includes('groom_mother_name')) {
+      console.log('Adding groom_mother_name column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN groom_mother_name TEXT DEFAULT ''`);
+    }
+    if (!columnNames.includes('bride_father_name')) {
+      console.log('Adding bride_father_name column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN bride_father_name TEXT DEFAULT ''`);
+    }
+    if (!columnNames.includes('bride_mother_name')) {
+      console.log('Adding bride_mother_name column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN bride_mother_name TEXT DEFAULT ''`);
+    }
+    if (!columnNames.includes('bismillah_text_en')) {
+      console.log('Adding bismillah_text_en column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN bismillah_text_en TEXT DEFAULT 'In the name of Allah, the Most Gracious, the Most Merciful'`);
+    }
+    if (!columnNames.includes('bismillah_text_ms')) {
+      console.log('Adding bismillah_text_ms column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN bismillah_text_ms TEXT DEFAULT 'Dengan nama Allah Yang Maha Pemurah lagi Maha Penyayang'`);
+    }
+    if (!columnNames.includes('with_pleasure_text_en')) {
+      console.log('Adding with_pleasure_text_en column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN with_pleasure_text_en TEXT DEFAULT 'With great pleasure, we'`);
+    }
+    if (!columnNames.includes('with_pleasure_text_ms')) {
+      console.log('Adding with_pleasure_text_ms column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN with_pleasure_text_ms TEXT DEFAULT 'Dengan penuh kesyukuran, kami'`);
+    }
+    if (!columnNames.includes('together_with_text_en')) {
+      console.log('Adding together_with_text_en column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN together_with_text_en TEXT DEFAULT 'together with'`);
+    }
+    if (!columnNames.includes('together_with_text_ms')) {
+      console.log('Adding together_with_text_ms column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN together_with_text_ms TEXT DEFAULT 'bersama'`);
+    }
+    if (!columnNames.includes('invitation_message_en')) {
+      console.log('Adding invitation_message_en column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN invitation_message_en TEXT DEFAULT 'cordially invite you to join us at the Wedding Reception of our beloved children'`);
+    }
+    if (!columnNames.includes('invitation_message_ms')) {
+      console.log('Adding invitation_message_ms column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN invitation_message_ms TEXT DEFAULT 'menjemput Yang Berbahagia Tan Sri / Puan Sri / Dato'' Seri / Datin Seri / Dato'' / Datin / Tuan / Puan / Encik / Cik ke majlis perkahwinan anakanda kami'`);
+    }
+    if (!columnNames.includes('cordially_invite_text_en')) {
+      console.log('Adding cordially_invite_text_en column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN cordially_invite_text_en TEXT DEFAULT 'Cordially invite you to join in at the Wedding Reception of our beloved children'`);
+    }
+    if (!columnNames.includes('cordially_invite_text_ms')) {
+      console.log('Adding cordially_invite_text_ms column...');
+      db.exec(`ALTER TABLE wedding_details ADD COLUMN cordially_invite_text_ms TEXT DEFAULT 'Cordially invite you to join in at the Wedding Reception of our beloved children'`);
+    }
+    
+    // Update existing records with better default values if columns were added
+    const hasExistingData = db.prepare('SELECT COUNT(*) as count FROM wedding_details').get() as { count: number };
+    if (hasExistingData.count > 0) {
+      console.log('Updating existing records with default invitation card values...');
+      db.exec(`UPDATE wedding_details SET 
+        groom_title_en = COALESCE(NULLIF(groom_title_en, ''), 'Ayah Pengantin Lelaki'),
+        groom_title_ms = COALESCE(NULLIF(groom_title_ms, ''), 'Ayah Pengantin Lelaki'),
+        bride_title_en = COALESCE(NULLIF(bride_title_en, ''), 'Ibu Pengantin Perempuan'),
+        bride_title_ms = COALESCE(NULLIF(bride_title_ms, ''), 'Ibu Pengantin Perempuan'),
+        groom_father_name = COALESCE(NULLIF(groom_father_name, ''), 'MOHAMAD SAID BIN RASSAL'),
+        groom_mother_name = COALESCE(NULLIF(groom_mother_name, ''), 'SAFURAH BINTI HJ KAMARUL'),
+        bride_father_name = COALESCE(NULLIF(bride_father_name, ''), 'KHARUL ANUAR BIN JAMALUDDIN'),
+        bride_mother_name = COALESCE(NULLIF(bride_mother_name, ''), 'AISHAH AIRIS BINTI ZAKARIA')
+      `);
+    }
+    
+    console.log('Invitation card fields migration completed successfully!');
+  } catch (error) {
+    console.error('Error adding invitation card fields:', error);
+  }
+}
+
 // Insert default wedding details if none exist
 const existingDetails = db.prepare('SELECT COUNT(*) as count FROM wedding_details').get() as { count: number };
 if (existingDetails.count === 0) {
@@ -282,8 +403,13 @@ if (existingDetails.count === 0) {
       dress_code_en, dress_code_ms,
       parking_info_en, parking_info_ms,
       food_info_en, food_info_ms,
-      invitation_note_en, invitation_note_ms
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      invitation_note_en, invitation_note_ms,
+      groom_title_en, groom_title_ms, bride_title_en, bride_title_ms,
+      groom_father_name, groom_mother_name, bride_father_name, bride_mother_name,
+      bismillah_text_en, bismillah_text_ms, with_pleasure_text_en, with_pleasure_text_ms,
+      together_with_text_en, together_with_text_ms, invitation_message_en, invitation_message_ms,
+      cordially_invite_text_en, cordially_invite_text_ms
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     'Hafiz', 'Afini', 'Saturday, Dec 27th 2025', 'Sabtu, 27 Dis 2025',
     '10:00 AM', '12:00 PM', '1:00 PM', '4:00 PM',
@@ -298,7 +424,14 @@ if (existingDetails.count === 0) {
     'Smart Casual', 'Smart Casual',
     'Parking available', 'Tempat letak kereta tersedia',
     'Halal food provided', 'Hidangan halal disediakan',
-    'Please bring this invitation', 'Sila bawa jemputan ini'
+    'Please bring this invitation', 'Sila bawa jemputan ini',
+    'Ayah Pengantin Lelaki', 'Ayah Pengantin Lelaki', 'Ibu Pengantin Lelaki', 'Ibu Pengantin Lelaki',
+    'MOHAMAD SAID BIN RASSAL', 'SAFURAH BINTI HJ KAMARUL', 'KHARUL ANUAR BIN JAMALUDDIN', 'AISHAH AIRIS BINTI ZAKARIA',
+    'In the name of Allah, the Most Gracious, the Most Merciful', 'Dengan nama Allah Yang Maha Pemurah lagi Maha Penyayang',
+    'With great pleasure, we', 'Dengan penuh kesyukuran, kami',
+    'together with', 'bersama',
+    'cordially invite you to join us at the Wedding Reception of our beloved children', 'menjemput Yang Berbahagia Tan Sri / Puan Sri / Dato\' Seri / Datin Seri / Dato\' / Datin / Tuan / Puan / Encik / Cik ke majlis perkahwinan anakanda kami',
+    'Cordially invite you to join in at the Wedding Reception of our beloved children', 'Cordially invite you to join in at the Wedding Reception of our beloved children'
   );
 }
 

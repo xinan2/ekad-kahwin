@@ -193,6 +193,26 @@ const WeddingDetailsForm: React.FC<WeddingDetailsFormProps> = ({ initialDetails 
     { label: 'Food Info', fieldName: 'food_info_ms', isTextArea: true, labelEnMs: true },
     { label: 'Invitation Note', fieldName: 'invitation_note_en', isTextArea: true, labelEnMs: true },
     { label: 'Invitation Note', fieldName: 'invitation_note_ms', isTextArea: true, labelEnMs: true },
+    
+    // New invitation card fields
+    { label: 'Groom Title', fieldName: 'groom_title_en', labelEnMs: true, required: false },
+    { label: 'Groom Title', fieldName: 'groom_title_ms', labelEnMs: true, required: false },
+    { label: 'Bride Title', fieldName: 'bride_title_en', labelEnMs: true, required: false },
+    { label: 'Bride Title', fieldName: 'bride_title_ms', labelEnMs: true, required: false },
+    { label: 'Groom Father Name', fieldName: 'groom_father_name', required: false },
+    { label: 'Groom Mother Name', fieldName: 'groom_mother_name', required: false },
+    { label: 'Bride Father Name', fieldName: 'bride_father_name', required: false },
+    { label: 'Bride Mother Name', fieldName: 'bride_mother_name', required: false },
+    { label: 'Bismillah Text', fieldName: 'bismillah_text_en', isTextArea: true, labelEnMs: true, required: false },
+    { label: 'Bismillah Text', fieldName: 'bismillah_text_ms', isTextArea: true, labelEnMs: true, required: false },
+    { label: 'With Pleasure Text', fieldName: 'with_pleasure_text_en', labelEnMs: true, required: false },
+    { label: 'With Pleasure Text', fieldName: 'with_pleasure_text_ms', labelEnMs: true, required: false },
+    { label: 'Together With Text', fieldName: 'together_with_text_en', labelEnMs: true, required: false },
+    { label: 'Together With Text', fieldName: 'together_with_text_ms', labelEnMs: true, required: false },
+    { label: 'Invitation Message', fieldName: 'invitation_message_en', isTextArea: true, labelEnMs: true, required: false },
+    { label: 'Invitation Message', fieldName: 'invitation_message_ms', isTextArea: true, labelEnMs: true, required: false },
+    { label: 'Cordially Invite Text', fieldName: 'cordially_invite_text_en', isTextArea: true, labelEnMs: true, required: false },
+    { label: 'Cordially Invite Text', fieldName: 'cordially_invite_text_ms', isTextArea: true, labelEnMs: true, required: false },
   ];
 
   return (

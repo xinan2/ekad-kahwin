@@ -51,16 +51,36 @@ export async function getWeddingDetails() {
         food_info_ms: '',
         invitation_note_en: '',
         invitation_note_ms: '',
+        
+        // New fields for formal invitation card
+        groom_title_en: '',
+        groom_title_ms: '',
+        bride_title_en: '',
+        bride_title_ms: '',
+        groom_father_name: '',
+        groom_mother_name: '',
+        bride_father_name: '',
+        bride_mother_name: '',
+        bismillah_text_en: 'In the name of Allah, the Most Gracious, the Most Merciful',
+        bismillah_text_ms: 'Dengan nama Allah Yang Maha Pemurah lagi Maha Penyayang',
+        with_pleasure_text_en: 'With great pleasure, we',
+        with_pleasure_text_ms: 'Dengan penuh kesyukuran, kami',
+        together_with_text_en: 'together with',
+        together_with_text_ms: 'bersama',
+        invitation_message_en: 'cordially invite you to join us at the Wedding Reception of our beloved children',
+        invitation_message_ms: 'menjemput Yang Berbahagia ke majlis perkahwinan anakanda kami',
+        cordially_invite_text_en: 'Cordially invite you to join us at the Wedding Reception of our beloved children',
+        cordially_invite_text_ms: 'Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami',
       };
       return defaultDetails;
     }
     // Ensure the returned object matches the schema (omitting id, updated_at for the form)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, updated_at, ...formData } = details;
-    return formData as z.infer<typeof WeddingDetailsSchema>; // Cast to the schema type
+    return formData;
   } catch (error) {
-    console.error('Error fetching wedding details for form:', error);
-    // Consider how to handle this error in the page component
-    throw new Error('Failed to fetch wedding details.'); 
+    console.error('Get wedding details error:', error);
+    throw new Error('Failed to fetch wedding details');
   }
 }
 
@@ -69,7 +89,7 @@ export async function updateWeddingDetails(
   formData: FormData
 ): Promise<WeddingDetailsFormState> {
   try {
-    const formValues: Record<string, any> = {};
+    const formValues: Record<string, FormDataEntryValue | null> = {};
     WeddingDetailsSchema.keyof().options.forEach(key => {
       formValues[key] = formData.get(key);
     });
