@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useTransition, useEffect, useId } from 'react';
-import { useForm, Controller, SubmitHandler, Control, FieldErrors } from 'react-hook-form';
+import { useForm, Controller, SubmitHandler, Control, FieldErrors, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { WeddingDetailsSchema, WeddingDetailsFormState } from '@/lib/schemas/weddingDetailsSchema';
@@ -111,14 +111,7 @@ const WeddingDetailsForm: React.FC<WeddingDetailsFormProps> = ({ initialDetails 
   );
   const [isPending, startTransition] = useTransition();
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<WeddingDetailsFormValues>({
-    resolver: zodResolver(WeddingDetailsSchema as any),
-    defaultValues: initialDetails,
-  });
+        const {    control,    handleSubmit,    formState: { errors },  } = useForm<WeddingDetailsFormValues>({    resolver: zodResolver(WeddingDetailsSchema) as Resolver<WeddingDetailsFormValues>,    defaultValues: initialDetails,  });
 
   useEffect(() => {
     if (formState.success) {

@@ -18,12 +18,15 @@
     "@types/better-sqlite3": "^7.6.13",
     "bcryptjs": "^3.0.2",
     "better-sqlite3": "^11.10.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "iron-session": "^8.0.4",
     "lucia": "^3.2.2",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.4",
+    "tailwind-merge": "^3.3.0",
     "zod": "^3.25.23"
   },
   "devDependencies": {

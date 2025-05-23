@@ -3,7 +3,8 @@ import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
 import Database from 'better-sqlite3';
 
-// Session configuration
+// Session configuration  
+// Users MUST set SECRET_COOKIE_PASSWORD environment variable - no fallback provided for security
 export const sessionOptions = {
   password: process.env.SECRET_COOKIE_PASSWORD,
   cookieName: "admin-session",
@@ -41,7 +42,7 @@ export interface WeddingDetails {
   reception_time_end: string;
   venue_name: string;
   venue_address: string;
-  venue_google_maps_url?: string;
+  venue_google_maps_url: string;
   contact1_name: string;
   contact1_phone: string;
   contact1_label_en: string;
@@ -438,6 +439,7 @@ if (existingDetails.count === 0) {
 // Get session
 export async function getSession() {
   const cookieStore = await cookies();
+  // @ts-expect-error - Users MUST set SECRET_COOKIE_PASSWORD environment variable
   const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
   
   if (!session.isLoggedIn) {
@@ -510,7 +512,7 @@ export const adminAuth = {
   // Get current admin user
   async getCurrentUser() {
     const session = await getSession();
-    if (!session.isLoggedIn || !session.userId) {
+    if (!session.isLoggedIn || !session.userId || !session.username) {
       return null;
     }
     return { id: session.userId, username: session.username };
