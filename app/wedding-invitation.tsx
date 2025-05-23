@@ -487,7 +487,7 @@ const RSVPModal = ({ t, weddingData, language }: { t: typeof translations.en; we
             value={formData.phone}
             onChange={(e) => handleInputChange('phone', e.target.value)}
             className="w-full px-3 py-2 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            placeholder={language === 'en' ? '+60 12-345 6789' : '+60 12-345 6789'}
+            placeholder={language === 'en' ? '60 12-345 6789' : '60 12-345 6789'}
             disabled={isSubmitting}
           />
         </div>

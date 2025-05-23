@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -13,9 +13,33 @@ interface AdminDashboardProps {
   user: User | null;
 }
 
+interface RSVPStats {
+  totalResponses: number;
+  totalPax: number;
+}
+
 export default function AdminDashboard({ user }: AdminDashboardProps) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [rsvpStats, setRsvpStats] = useState<RSVPStats>({ totalResponses: 0, totalPax: 0 });
   const router = useRouter();
+
+  // Fetch RSVP data on component mount
+  useEffect(() => {
+    fetchRSVPData();
+  }, []);
+
+  const fetchRSVPData = async () => {
+    try {
+      const response = await fetch('/api/rsvp');
+      const data = await response.json();
+      
+      if (data.success) {
+        setRsvpStats(data.data.stats);
+      }
+    } catch (error) {
+      console.error('Error fetching RSVP data:', error);
+    }
+  };
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -33,6 +57,10 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
     } finally {
       setIsLoggingOut(false);
     }
+  };
+
+  const handleViewRSVPs = () => {
+    router.push('/admin/rsvp/list');
   };
 
   return (
@@ -67,27 +95,42 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 border border-green-100">
-            <h2 className="text-2xl font-bold text-green-800 mb-4">Wedding Management Dashboard</h2>
-            <p className="text-green-600 mb-6">
-              Manage your wedding invitation, guest responses, and event details from this central dashboard.
-            </p>
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h2 className="text-2xl font-bold text-green-800">Wedding Management Dashboard</h2>
+                <p className="text-green-600">
+                  Manage your wedding invitation, guest responses, and event details from this central dashboard.
+                </p>
+              </div>
+              <button
+                onClick={fetchRSVPData}
+                className="bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-lg text-sm transition-colors flex items-center space-x-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Refresh</span>
+              </button>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="bg-green-50 p-6 rounded-xl border border-green-200">
-                <div className="text-3xl font-bold text-green-700">0</div>
+                <div className="text-3xl font-bold text-green-700">{rsvpStats.totalResponses}</div>
                 <div className="text-sm text-green-600 mt-1">Total RSVP</div>
               </div>
               <div className="bg-blue-50 p-6 rounded-xl border border-blue-200">
-                <div className="text-3xl font-bold text-blue-700">0</div>
-                <div className="text-sm text-blue-600 mt-1">Confirmed</div>
+                <div className="text-3xl font-bold text-blue-700">{rsvpStats.totalPax}</div>
+                <div className="text-sm text-blue-600 mt-1">Total Guests</div>
               </div>
               <div className="bg-orange-50 p-6 rounded-xl border border-orange-200">
                 <div className="text-3xl font-bold text-orange-700">0</div>
-                <div className="text-sm text-orange-600 mt-1">Rejected</div>
+                <div className="text-sm text-orange-600 mt-1">Declined</div>
               </div>
                <div className="bg-purple-50 p-6 rounded-xl border border-purple-200">
-                <div className="text-3xl font-bold text-purple-700">0</div>
-                <div className="text-sm text-purple-600 mt-1">Page Views</div>
+                <div className="text-3xl font-bold text-purple-700">
+                  {rsvpStats.totalResponses > 0 ? (rsvpStats.totalPax / rsvpStats.totalResponses).toFixed(1) : '0'}
+                </div>
+                <div className="text-sm text-purple-600 mt-1">Avg. Party Size</div>
               </div>
             </div>
           </div>
@@ -105,7 +148,7 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
                 <h3 className="text-lg font-semibold text-green-800 ml-3">RSVP Management</h3>
               </div>
               <p className="text-green-600 text-sm mb-4">View and manage guest responses</p>
-              <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition-colors">
+              <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition-colors" onClick={handleViewRSVPs}>
                 View RSVPs
               </button>
             </div>

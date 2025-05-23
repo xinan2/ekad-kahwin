@@ -73,6 +73,15 @@ export interface WeddingDetails {
   updated_at: string;
 }
 
+// RSVP response interface
+export interface RSVPResponse {
+  id: string;
+  name: string;
+  phone: string;
+  pax: number;
+  created_at: string;
+}
+
 // Initialize SQLite database for admin users
 const db = new Database("admin.db");
 
@@ -130,6 +139,17 @@ db.exec(`
     invitation_note_en TEXT NOT NULL,
     invitation_note_ms TEXT NOT NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+// Create RSVP responses table
+db.exec(`
+  CREATE TABLE IF NOT EXISTS rsvp_responses (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    pax INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `);
 
@@ -221,12 +241,12 @@ if (hasOldSchema) {
       existingData.venue_name || 'Dewan Banquet Hall',
       existingData.venue_address || 'Jalan Mawar 1/2, Taman Mawar, 43000 Kajang, Selangor',
       existingData.venue_google_maps_url || 'https://maps.google.com/?q=Dewan+Banquet+Hall+Kajang',
-      existingData.groom_contact_name || 'Hafiz', existingData.groom_contact_phone || '+60 12-345 6789', 
+      existingData.groom_contact_name || 'Hafiz', existingData.groom_contact_phone || '60 12-345 6789', 
       "Groom's Family", 'Keluarga Pengantin Lelaki',
-      existingData.bride_contact_name || 'Afini', existingData.bride_contact_phone || '+60 12-987 6543', 
+      existingData.bride_contact_name || 'Afini', existingData.bride_contact_phone || '60 12-987 6543', 
       "Bride's Family", 'Keluarga Pengantin Perempuan',
-      'Ahmad (Father)', '+60 13-111 2222', "Groom's Father", 'Bapa Pengantin Lelaki',
-      'Siti (Mother)', '+60 14-333 4444', "Bride's Mother", 'Ibu Pengantin Perempuan',
+      'Ahmad (Father)', '60 13-111 2222', "Groom's Father", 'Bapa Pengantin Lelaki',
+      'Siti (Mother)', '60 14-333 4444', "Bride's Mother", 'Ibu Pengantin Perempuan',
       existingData.rsvp_deadline || 'December 20, 2025',
       existingData.rsvp_deadline_ms || '20 Disember 2025',
       existingData.event_type_en || 'WALIMATUL URUS',
@@ -269,10 +289,10 @@ if (existingDetails.count === 0) {
     '10:00 AM', '12:00 PM', '1:00 PM', '4:00 PM',
     'Dewan Banquet Hall', 'Jalan Mawar 1/2, Taman Mawar, 43000 Kajang, Selangor',
     'https://maps.google.com/?q=Dewan+Banquet+Hall+Kajang',
-    'Hafiz', '+60 12-345 6789', "Groom's Family", 'Keluarga Pengantin Lelaki',
-    'Afini', '+60 12-987 6543', "Bride's Family", 'Keluarga Pengantin Perempuan',
-    'Ahmad (Father)', '+60 13-111 2222', "Groom's Father", 'Bapa Pengantin Lelaki',
-    'Siti (Mother)', '+60 14-333 4444', "Bride's Mother", 'Ibu Pengantin Perempuan',
+    'Hafiz', '60 12-345 6789', "Groom's Family", 'Keluarga Pengantin Lelaki',
+    'Afini', '60 12-987 6543', "Bride's Family", 'Keluarga Pengantin Perempuan',
+    'Ahmad (Father)', '60 13-111 2222', "Groom's Father", 'Bapa Pengantin Lelaki',
+    'Siti (Mother)', '60 14-333 4444', "Bride's Mother", 'Ibu Pengantin Perempuan',
     'December 20, 2025', '20 Disember 2025',
     'WALIMATUL URUS', 'WALIMATUL URUS',
     'Smart Casual', 'Smart Casual',
@@ -408,6 +428,60 @@ export const weddingDetails = {
     } catch (error) {
       console.error('Error updating wedding details:', error);
       return { success: false, error: 'Failed to update wedding details' };
+    }
+  }
+};
+
+// RSVP functions
+export const rsvpResponses = {
+  // Create RSVP response
+  async createResponse(name: string, phone: string, pax: number): Promise<{ success: boolean; error?: string; id?: string }> {
+    try {
+      // Check for duplicate phone number
+      const existingStmt = db.prepare('SELECT id FROM rsvp_responses WHERE phone = ?');
+      const existing = existingStmt.get(phone) as RSVPResponse | undefined;
+      
+      if (existing) {
+        return { success: false, error: 'This phone number has already been used to RSVP' };
+      }
+
+      const id = crypto.randomUUID();
+      const stmt = db.prepare(`
+        INSERT INTO rsvp_responses (id, name, phone, pax) 
+        VALUES (?, ?, ?, ?)
+      `);
+      stmt.run(id, name, phone, pax);
+      return { success: true, id };
+    } catch (error) {
+      console.error('Error creating RSVP response:', error);
+      return { success: false, error: 'Failed to submit RSVP' };
+    }
+  },
+
+  // Get all RSVP responses
+  async getAllResponses(): Promise<RSVPResponse[]> {
+    try {
+      const stmt = db.prepare('SELECT * FROM rsvp_responses ORDER BY created_at DESC');
+      const responses = stmt.all() as RSVPResponse[];
+      return responses;
+    } catch (error) {
+      console.error('Error getting RSVP responses:', error);
+      return [];
+    }
+  },
+
+  // Get total RSVP count and pax
+  async getStats(): Promise<{ totalResponses: number; totalPax: number }> {
+    try {
+      const stmt = db.prepare('SELECT COUNT(*) as total_responses, COALESCE(SUM(pax), 0) as total_pax FROM rsvp_responses');
+      const stats = stmt.get() as { total_responses: number; total_pax: number };
+      return { 
+        totalResponses: stats.total_responses, 
+        totalPax: stats.total_pax 
+      };
+    } catch (error) {
+      console.error('Error getting RSVP stats:', error);
+      return { totalResponses: 0, totalPax: 0 };
     }
   }
 }; 

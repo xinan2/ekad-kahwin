@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { WeddingDetails } from '@/lib/auth';
+import RSVPForm from '@/components/RSVPForm';
 
 // Language type
 type Language = 'en' | 'ms';
@@ -356,6 +357,8 @@ const LocationModal = ({ t, weddingData }: { t: typeof translations.en; weddingD
 };
 
 const RSVPModal = ({ t, weddingData, language }: { t: typeof translations.en; weddingData: WeddingDetails | null; language: Language }) => {
+  const [showForm, setShowForm] = useState(false);
+
   if (!weddingData) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -365,6 +368,27 @@ const RSVPModal = ({ t, weddingData, language }: { t: typeof translations.en; we
   }
 
   const deadline = language === 'en' ? weddingData.rsvp_deadline : weddingData.rsvp_deadline_ms;
+
+  const handleAttendClick = () => {
+    setShowForm(true);
+  };
+
+  const handleFormSuccess = () => {
+    // Form will show success state for 2 seconds, then this gets called
+    setShowForm(false);
+  };
+
+  const handleDeclineClick = () => {
+    // You could add decline tracking here if needed
+    alert(language === 'en' 
+      ? 'Thank you for letting us know. We hope to see you at future celebrations!' 
+      : 'Terima kasih kerana memberitahu kami. Kami berharap dapat bertemu anda di majlis akan datang!'
+    );
+  };
+
+  if (showForm) {
+    return <RSVPForm onSuccess={handleFormSuccess} language={language} />;
+  }
 
   return (
     <div className="space-y-4">
@@ -376,10 +400,16 @@ const RSVPModal = ({ t, weddingData, language }: { t: typeof translations.en; we
         }
       </p>
       <div className="space-y-3">
-        <button className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors">
+        <button 
+          onClick={handleAttendClick}
+          className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors"
+        >
           {t.willAttend}
         </button>
-        <button className="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition-colors">
+        <button 
+          onClick={handleDeclineClick}
+          className="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition-colors"
+        >
           {t.cannotAttend}
         </button>
       </div>
@@ -685,17 +715,17 @@ export default function HomePage() {
           </div>
 
           {/* Wedding Invitation Content */}
-          <div className="relative z-10 flex-1 flex items-center justify-center p-6">
+          <div className="relative z-10 flex-1 flex items-center justify-center">
             <div className="text-center text-white max-w-md mx-auto">
               {/* Islamic Ornament */}
-              <div className="mb-8">
-                <div className="text-4xl mb-4">☪</div>
-                <div className="w-24 h-px bg-white/60 mx-auto mb-2" />
-                <div className="text-sm tracking-widest opacity-80">
+              <div className="mb-4 pt-40">
+                <div className="text-4xl mb-4 text-black">☪</div>
+                <div className="w-24 h-px bg-black/60 mx-auto mb-2" />
+                <div className="text-sm tracking-widest opacity-80 text-black">
                   {weddingData ? (language === 'en' ? weddingData.event_type_en : weddingData.event_type_ms) : 'WALIMATUL URUS'}
                 </div>
-                <div className="text-xs opacity-60 italic">{t.weddingInvitation}</div>
-                <div className="w-24 h-px bg-white/60 mx-auto mt-2" />
+                <div className="text-xs opacity-60 italic text-black">{t.weddingInvitation}</div>
+                <div className="w-24 h-px bg-black/60 mx-auto mt-2" />
               </div>
 
               {/* Names */}
