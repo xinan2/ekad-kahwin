@@ -69,7 +69,7 @@ const translations = {
     dateShort: 'Sabtu, 27 Dis 2025',
     
     // Navigation
-    calendar: 'Kalender',
+    calendar: 'Kalendar',
     contact: 'Hubungi',
     location: 'Lokasi',
     rsvp: 'RSVP',
@@ -109,7 +109,7 @@ const translations = {
     selectLanguage: 'Pilih Bahasa',
     english: 'English',
     malay: 'Bahasa Melayu',
-    addToCalendar: 'Tambah ke Kalender',
+    addToCalendar: 'Tambah ke Kalendar',
     googleCalendar: 'Google Calendar',
     appleCalendar: 'Apple Calendar'
   }

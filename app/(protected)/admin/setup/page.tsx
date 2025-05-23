@@ -73,7 +73,7 @@ export default function AdminSetupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center p-4 font-sans">
         <div className="max-w-md w-full text-center">
           <div className="bg-white rounded-2xl shadow-lg p-8 border border-green-100">
             <div className="text-6xl mb-4">✅</div>
@@ -89,7 +89,7 @@ export default function AdminSetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center p-4 font-sans">
       <div className="max-w-md w-full">
         {/* Header */}
         <div className="text-center mb-8">

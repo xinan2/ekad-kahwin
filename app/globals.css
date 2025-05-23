@@ -98,4 +98,13 @@ a {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
+
+  input,
+  textarea,
+  select {
+    background-color: hsl(var(--input));
+    color: hsl(var(--foreground));
+    /* You might want to add a default border as well if not all inputs will have one explicitly */
+    /* border: 1px solid hsl(var(--border)); */ 
+  }
 }

@@ -10,6 +10,9 @@
     "seed:admin": "node scripts/seed-admin.mjs"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-slot": "^1.2.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/better-sqlite3": "^7.6.13",
     "bcryptjs": "^3.0.2",
@@ -18,7 +21,9 @@
     "lucia": "^3.2.2",
     "next": "15.1.6",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.56.4",
+    "zod": "^3.25.23"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

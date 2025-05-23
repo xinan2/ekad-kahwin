@@ -5,7 +5,7 @@ import Database from 'better-sqlite3';
 
 // Session configuration
 export const sessionOptions = {
-  password: process.env.SECRET_COOKIE_PASSWORD || "complex_password_at_least_32_characters_long_for_security_fallback_with_extra_length",
+  password: process.env.SECRET_COOKIE_PASSWORD,
   cookieName: "admin-session",
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
