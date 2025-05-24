@@ -30,11 +30,14 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
 
   const fetchRSVPData = async () => {
     try {
-      const response = await fetch('/api/rsvp');
+      const response = await fetch('/api/admin/rsvp');
       const data = await response.json();
       
       if (data.success) {
         setRsvpStats(data.data.stats);
+      } else if (response.status === 401) {
+        // Handle authentication error - redirect to login
+        router.push('/admin/login');
       }
     } catch (error) {
       console.error('Error fetching RSVP data:', error);

@@ -21,7 +21,7 @@ A beautiful, modern digital wedding invitation app built with Next.js, featuring
 ### 🔧 Technical Features
 - **TypeScript**: Full type safety throughout the application
 - **Server Actions**: Modern Next.js server actions for form handling
-- **SQLite Database**: Lightweight, embedded database with auto-migration
+- **PostgreSQL Database**: Production-ready database with Drizzle ORM
 - **Form Validation**: Zod schema validation with React Hook Form
 - **Session Management**: Secure admin authentication with iron-session
 
@@ -30,7 +30,7 @@ A beautiful, modern digital wedding invitation app built with Next.js, featuring
 - **Framework**: [Next.js 14](https://nextjs.org/) with App Router
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Database**: [SQLite](https://www.sqlite.org/) with [better-sqlite3](https://github.com/WiseLibs/better-sqlite3)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Drizzle ORM](https://orm.drizzle.team/)
 - **Forms**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
 - **Authentication**: [iron-session](https://github.com/vvo/iron-session)
 - **Icons**: Custom SVG icons
@@ -69,6 +69,7 @@ A beautiful, modern digital wedding invitation app built with Next.js, featuring
    SECRET_COOKIE_PASSWORD=''
    HCAPTCHA_SECRET_KEY=''
    NEXT_PUBLIC_HCAPTCHA_SITE_KEY=''
+   DATABASE_URL=''
    ```
 
 4. **Start the development server**
@@ -144,13 +145,15 @@ ekad-kahwin/
 │   └── *.tsx                     # Feature components
 ├── lib/                          # Utilities and core logic
 │   ├── actions/                  # Server actions
-│   ├── schemas/                  # Zod validation schemas
+│   ├── db/                       # Database schema and connection
+│   │   ├── schema.ts             # Drizzle schema & Zod validation
+│   │   └── connect.ts            # Database connection
 │   ├── auth.ts                   # Authentication & database
 │   └── utils.ts                  # Utility functions
 ├── locales/                      # Internationalization
 │   ├── en.json                   # English translations
 │   └── ms.json                   # Malay translations
-└── admin.db                      # SQLite database (auto-created)
+└── drizzle/                      # Database migrations
 ```
 
 ## 🎨 Customization
@@ -166,26 +169,29 @@ ekad-kahwin/
 - Customize form validation in `lib/schemas/`
 
 ### Database
-- SQLite database auto-creates and migrates
-- Schema defined in `lib/auth.ts`
-- Add new fields by updating interfaces and migration logic
+- PostgreSQL database with Drizzle ORM
+- Schema defined in `lib/db/schema.ts`
+- Migrations handled by Drizzle Kit
 
-## 🔄 Database Migration
+## 🔄 Database Management
 
-The app uses automatic SQLite migration:
+The app uses Drizzle ORM for database management:
 
-1. **Automatic Migration**: Runs when the app starts
-2. **Column Detection**: Checks existing database structure
-3. **Safe Updates**: Only adds missing columns, never removes data
-4. **Default Values**: Populates new fields with sensible defaults
+1. **Schema Definition**: Database tables defined in `lib/db/schema.ts`
+2. **Migrations**: Generated and applied using Drizzle Kit
+3. **Type Safety**: Full TypeScript support for database operations
+4. **Connection**: PostgreSQL connection via connection pooling
 
-### Manual Database Reset (if needed)
+### Database Operations
 ```bash
-# Stop the server
-# Delete the database file
-rm admin.db
-# Restart the server - fresh database will be created
-npm run dev
+# Generate migrations after schema changes
+npx drizzle-kit generate
+
+# Apply migrations to database
+npx drizzle-kit push
+
+# View database in Drizzle Studio (optional)
+npx drizzle-kit studio
 ```
 
 ## 🚀 Deployment
@@ -207,14 +213,15 @@ npm run dev
 3. **Set Environment Variables**
    ```env
    SECRET_COOKIE_PASSWORD=your-production-secret-key
+   DATABASE_URL=your-postgresql-connection-string
+   HCAPTCHA_SECRET_KEY=your-hcaptcha-secret
+   NEXT_PUBLIC_HCAPTCHA_SITE_KEY=your-hcaptcha-site-key
    ```
 
-### Other Platforms
-The app can be deployed on any platform that supports Next.js:
-- Railway
-- Render
-- DigitalOcean App Platform
-- AWS Amplify
+### Deployment Platforms
+The app can be deployed for free on:
+- Netlify (NextJS App)
+- Neon (Postgres DB)
 
 ## 📝 License
 

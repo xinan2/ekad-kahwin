@@ -5,15 +5,19 @@ import { db } from '@/lib/db/connect';
 import { adminUsers, weddingDetails as weddingDetailsTable, rsvpResponses as rsvpResponsesTable } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { sql } from 'drizzle-orm';
+import { auditDatabaseOperation, monitorQuery, validateQueryParams } from '@/lib/db-security';
 
 // Session configuration  
 // Users MUST set SECRET_COOKIE_PASSWORD environment variable - no fallback provided for security
 export const sessionOptions = {
   password: process.env.SECRET_COOKIE_PASSWORD,
-  cookieName: "admin-session",
+  cookieName: "__Host-wedding-admin-session", // __Host- prefix provides additional security
   cookieOptions: {
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 7, // 1 week
+    secure: true, // Always require HTTPS (even in development for security)
+    httpOnly: true, // Prevent XSS attacks - cookie not accessible via JavaScript
+    sameSite: "strict" as const, // Prevent CSRF attacks
+    maxAge: 60 * 60 * 2, // 2 hours instead of 1 week
+    path: "/", // Explicit path setting
   },
 };
 
@@ -22,6 +26,7 @@ export interface SessionData {
   userId?: string;
   username?: string;
   isLoggedIn: boolean;
+  lastActivity?: number; // Timestamp for session timeout
 }
 
 // Wedding details interface for backward compatibility
@@ -188,13 +193,22 @@ export async function getSession() {
 export const adminAuth = {
   // Create admin user (use this once to create your admin account)
   async createAdmin(username: string, password: string) {
+    // Validate inputs for security
+    if (!validateQueryParams({ username, password }, 'createAdmin')) {
+      return { success: false, error: 'Invalid input detected' };
+    }
+    
     const hashedPassword = await bcrypt.hash(password, 12);
     
     try {
+      monitorQuery('INSERT', 'admin_users', { username });
+      
       const result = await db.insert(adminUsers).values({
         username,
         password: hashedPassword,
       }).returning({ id: adminUsers.id });
+      
+      auditDatabaseOperation('INSERT', 'admin_users', result[0].id.toString(), { username });
       
       return { success: true, id: result[0].id.toString() };
     } catch (error) {
@@ -206,6 +220,13 @@ export const adminAuth = {
   // Login admin
   async login(username: string, password: string) {
     try {
+      // Validate inputs for security
+      if (!validateQueryParams({ username }, 'login')) {
+        return { success: false, error: 'Invalid credentials' };
+      }
+      
+      monitorQuery('SELECT', 'admin_users', { username });
+      
       const result = await db
         .select()
         .from(adminUsers)
@@ -224,11 +245,21 @@ export const adminAuth = {
         return { success: false, error: 'Invalid credentials' };
       }
       
-      // Create session
+      // Create session with regeneration for security
       const session = await getSession();
+      
+      // Clear any existing session data first
+      session.userId = undefined;
+      session.username = undefined;
+      session.isLoggedIn = false;
+      
+      // Set new session data
       session.userId = user.id.toString();
       session.username = user.username;
       session.isLoggedIn = true;
+      session.lastActivity = Date.now(); // Set initial activity timestamp
+      
+      // Save the session
       await session.save();
       
       return { success: true, user: { id: user.id.toString(), username: user.username } };
@@ -241,13 +272,42 @@ export const adminAuth = {
   // Logout admin
   async logout() {
     const session = await getSession();
+    // Clear all session data before destroying
+    session.userId = undefined;
+    session.username = undefined;
+    session.isLoggedIn = false;
+    session.lastActivity = undefined;
+    // Destroy the session
     session.destroy();
   },
 
   // Check if user is authenticated
   async isAuthenticated() {
     const session = await getSession();
-    return session.isLoggedIn && session.userId;
+    
+    if (!session.isLoggedIn || !session.userId) {
+      return false;
+    }
+    
+    // Check session timeout (2 hours = 7200000 milliseconds)
+    const now = Date.now();
+    const sessionTimeout = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+    
+    if (session.lastActivity && (now - session.lastActivity > sessionTimeout)) {
+      // Session expired, clear it
+      session.userId = undefined;
+      session.username = undefined;
+      session.isLoggedIn = false;
+      session.lastActivity = undefined;
+      await session.save();
+      return false;
+    }
+    
+    // Update last activity
+    session.lastActivity = now;
+    await session.save();
+    
+    return true;
   },
 
   // Get current admin user
@@ -381,6 +441,13 @@ export const rsvpResponses = {
   // Create RSVP response
   async createResponse(name: string, phone: string, pax: number): Promise<{ success: boolean; error?: string; id?: string }> {
     try {
+      // Validate inputs for security
+      if (!validateQueryParams({ name, phone, pax: pax.toString() }, 'createRSVP')) {
+        return { success: false, error: 'Invalid input detected' };
+      }
+      
+      monitorQuery('SELECT', 'rsvp_responses', { phone });
+      
       // Check for duplicate phone number
       const existing = await db
         .select()
@@ -392,6 +459,8 @@ export const rsvpResponses = {
         return { success: false, error: 'This phone number has already been used to RSVP' };
       }
 
+      monitorQuery('INSERT', 'rsvp_responses', { name, phone, pax });
+      
       const result = await db
         .insert(rsvpResponsesTable)
         .values({
@@ -400,6 +469,8 @@ export const rsvpResponses = {
           pax,
         })
         .returning({ id: rsvpResponsesTable.id });
+      
+      auditDatabaseOperation('INSERT', 'rsvp_responses', result[0].id.toString(), { name, phone, pax });
       
       return { success: true, id: result[0].id.toString() };
     } catch (error) {

@@ -1,5 +1,6 @@
 import { weddingDetails, requireAdmin } from '@/lib/auth';
 import { NextRequest } from 'next/server';
+import { sanitizeFormData, logSecurityEvent } from '@/lib/input-sanitizer';
 
 // GET wedding details (public route)
 export async function GET() {
@@ -29,11 +30,23 @@ export async function PUT(request: NextRequest) {
     // Check admin authentication
     await requireAdmin();
 
-    const updateData = await request.json();
+    const rawUpdateData = await request.json();
+    
+    // Sanitize all input data to prevent injection attacks
+    const sanitizedData = sanitizeFormData(rawUpdateData);
+    
+    // Log if input was sanitized (potential attack)
+    if (JSON.stringify(sanitizedData) !== JSON.stringify(rawUpdateData)) {
+      logSecurityEvent('WEDDING_DETAILS_INPUT_SANITIZED', {
+        sanitizedFields: Object.keys(sanitizedData).length
+      });
+    }
 
     // Remove id and timestamps from update data
-    delete updateData.id;
-    delete updateData.updated_at;
+    delete sanitizedData.id;
+    delete sanitizedData.updated_at;
+    
+    const updateData = sanitizedData;
 
     const result = await weddingDetails.updateDetails(updateData);
 

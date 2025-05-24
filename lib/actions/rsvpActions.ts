@@ -2,6 +2,7 @@
 
 import { rsvpResponses } from '@/lib/auth';
 import { RSVPSchema, RSVPFormState } from '@/lib/db/schema';
+import { sanitizeText, sanitizePhone, logSecurityEvent } from '@/lib/input-sanitizer';
 
 // Phone number normalization for Malaysian numbers
 function normalizePhoneNumber(phone: string): string {
@@ -60,16 +61,31 @@ export async function submitRSVP(
   formData: FormData
 ): Promise<RSVPFormState> {
   try {
-    // 1. Extract and normalize phone number
-    const rawPhone = formData.get('phone') as string;
+    // 1. Extract and sanitize inputs
+    const rawName = sanitizeText(formData.get('name') as string || '', 100);
+    const rawPhone = sanitizePhone(formData.get('phone') as string || '');
+    const rawPax = Math.max(1, Math.min(parseInt(formData.get('pax') as string) || 1, 10));
+    const rawToken = sanitizeText(formData.get('hcaptchaToken') as string || '', 1000);
+    
+    // Log if inputs were suspicious
+    const originalName = formData.get('name') as string || '';
+    const originalPhone = formData.get('phone') as string || '';
+    if (rawName !== originalName || rawPhone !== originalPhone) {
+      logSecurityEvent('RSVP_INPUT_SANITIZED', {
+        nameChanged: rawName !== originalName,
+        phoneChanged: rawPhone !== originalPhone
+      });
+    }
+    
+    // 2. Normalize phone number
     const normalizedPhone = normalizePhoneNumber(rawPhone);
 
-    // 2. Validate form data (using normalized phone)
+    // 3. Validate form data (using sanitized and normalized data)
     const validatedFields = RSVPSchema.safeParse({
-      name: formData.get('name'),
+      name: rawName,
       phone: normalizedPhone,
-      pax: parseInt(formData.get('pax') as string) || 0,
-      hcaptchaToken: formData.get('hcaptchaToken'),
+      pax: rawPax,
+      hcaptchaToken: rawToken,
     });
 
     if (!validatedFields.success) {
@@ -82,7 +98,7 @@ export async function submitRSVP(
 
     const { name, phone, pax, hcaptchaToken } = validatedFields.data;
 
-    // 3. Verify hCaptcha token
+    // 4. Verify hCaptcha token
     const isValidCaptcha = await verifyHCaptcha(hcaptchaToken);
     if (!isValidCaptcha) {
       return {
@@ -92,7 +108,7 @@ export async function submitRSVP(
       };
     }
 
-    // 4. Create RSVP response (phone number is already normalized with +60)
+    // 5. Create RSVP response (phone number is already normalized with +60)
     const result = await rsvpResponses.createResponse(name, phone, pax);
 
     if (!result.success) {
@@ -103,7 +119,7 @@ export async function submitRSVP(
       };
     }
 
-    // 5. Return success state
+    // 6. Return success state
     return {
       message: 'RSVP submitted successfully! Thank you for confirming your attendance.',
       success: true,

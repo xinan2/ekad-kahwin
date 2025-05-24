@@ -1,8 +1,21 @@
 import { adminAuth } from '@/lib/auth';
+import { sanitizeUsername, sanitizeText, logSecurityEvent } from '@/lib/input-sanitizer';
 
 export async function POST(request: Request) {
   try {
-    const { username, password } = await request.json();
+    const rawData = await request.json();
+    
+    // Sanitize inputs to prevent injection attacks
+    const username = sanitizeUsername(rawData.username || '');
+    const password = sanitizeText(rawData.password || '', 200); // Max 200 chars for password
+    
+    // Log if original input was modified (potential attack)
+    if (username !== rawData.username || password !== rawData.password) {
+      logSecurityEvent('LOGIN_INPUT_SANITIZED', {
+        originalUsername: rawData.username?.substring(0, 20),
+        originalPassword: '[REDACTED]'
+      });
+    }
 
     if (!username || !password) {
       return Response.json(

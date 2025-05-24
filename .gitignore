@@ -40,4 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-admin.db
+
+# Remove SQLite database references - now using PostgreSQL
+# admin.db
