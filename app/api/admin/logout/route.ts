@@ -11,6 +11,9 @@ export async function POST() {
       );
     }
     
+    // Update session activity before logout (since this is a route handler)
+    await adminAuth.updateSessionActivity();
+    
     await adminAuth.logout();
     return Response.json({ success: true, message: 'Logged out successfully' });
   } catch (error) {

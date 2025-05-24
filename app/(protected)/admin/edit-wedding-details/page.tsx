@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 
 export default async function EditWeddingDetailsPage() {
   // Ensure user is authenticated
-  const isAuthenticated = await adminAuth.isAuthenticated();
+  const isAuthenticated = await adminAuth.isAuthenticatedReadOnly();
   if (!isAuthenticated) {
     redirect('/admin/login');
   }

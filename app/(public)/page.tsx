@@ -40,6 +40,8 @@ const translations = {
     contactUs: 'Contact Us',
     groomFamily: 'Groom\'s Family',
     brideFamily: 'Bride\'s Family',
+    call: 'Call',
+    whatsapp: 'WhatsApp',
     
     // Location Modal
     venueLocation: 'Venue Location',
@@ -50,6 +52,7 @@ const translations = {
     rsvpMessage: 'Please confirm your attendance before December 20, 2025',
     willAttend: '✓ Yes, I Will Attend',
     cannotAttend: '✗ Sorry, Cannot Attend',
+    declineMessage: 'Thank you for letting us know. We hope to see you at future celebrations!',
     
     // Notes Modal
     importantNotes: 'Important Notes',
@@ -64,7 +67,34 @@ const translations = {
     malay: 'Bahasa Melayu',
     addToCalendar: 'Add to Calendar',
     googleCalendar: 'Google Calendar',
-    appleCalendar: 'Apple Calendar'
+    appleCalendar: 'Apple Calendar',
+    
+    // Invitation Card
+    with: 'with',
+    brideFatherTitle: 'Father of the Bride',
+    brideMotherTitle: 'Mother of the Bride',
+    groomFatherTitle: 'Father of the Groom',
+    groomMotherTitle: 'Mother of the Groom',
+    ceremony: 'Ceremony',
+    reception: 'Reception',
+    cordiallyInvite: 'Cordially invite you to join us at the Wedding Reception of our beloved children',
+    
+    // Desktop note
+    bestViewedMobile: '💍 Best viewed on mobile • Scroll down for navigation',
+    
+    // Calendar Event Text
+    wedding: 'Wedding',
+    weddingInvitationText: 'Wedding Invitation',
+    ceremonySummary: 'Ceremony',
+    receptionSummary: 'Reception',
+    venue: 'Venue',
+    
+    // Default names fallback
+    defaultGroomName: 'Hafiz',
+    defaultBrideName: 'Afini',
+    
+    // Image alt text
+    weddingBackgroundAlt: 'Wedding Background'
   },
   ms: {
     // Main content
@@ -96,6 +126,8 @@ const translations = {
     contactUs: 'Hubungi Kami',
     groomFamily: 'Keluarga Pengantin Lelaki',
     brideFamily: 'Keluarga Pengantin Perempuan',
+    call: 'Panggil',
+    whatsapp: 'WhatsApp',
     
     // Location Modal
     venueLocation: 'Lokasi Majlis',
@@ -106,6 +138,7 @@ const translations = {
     rsvpMessage: 'Sila sahkan kehadiran anda sebelum 20 Disember 2025',
     willAttend: '✓ Ya, Saya Akan Hadir',
     cannotAttend: '✗ Maaf, Tidak Dapat Hadir',
+    declineMessage: 'Terima kasih kerana memberitahu kami. Kami berharap dapat bertemu anda di majlis akan datang!',
     
     // Notes Modal
     importantNotes: 'Nota Penting',
@@ -120,7 +153,34 @@ const translations = {
     malay: 'Bahasa Melayu',
     addToCalendar: 'Tambah ke Kalendar',
     googleCalendar: 'Google Calendar',
-    appleCalendar: 'Apple Calendar'
+    appleCalendar: 'Apple Calendar',
+    
+    // Invitation Card
+    with: 'dengan',
+    brideFatherTitle: 'Ayah Pengantin Perempuan',
+    brideMotherTitle: 'Ibu Pengantin Perempuan',
+    groomFatherTitle: 'Ayah Pengantin Lelaki',
+    groomMotherTitle: 'Ibu Pengantin Lelaki',
+    ceremony: 'Akad Nikah',
+    reception: 'Walimatul Urus',
+    cordiallyInvite: 'Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami',
+    
+    // Desktop note
+    bestViewedMobile: '💍 Terbaik dilihat di telefon bimbit • Skrol ke bawah untuk navigasi',
+    
+    // Calendar Event Text
+    wedding: 'Perkahwinan',
+    weddingInvitationText: 'Jemputan Kahwin',
+    ceremonySummary: 'Akad Nikah',
+    receptionSummary: 'Walimatul Urus',
+    venue: 'Tempat',
+    
+    // Default names fallback
+    defaultGroomName: 'Hafiz',
+    defaultBrideName: 'Afini',
+    
+    // Image alt text
+    weddingBackgroundAlt: 'Latar Belakang Kahwin'
   }
 };
 
@@ -181,7 +241,7 @@ const BackIcon = () => (
 );
 
 // Full Invitation Card Component
-const InvitationCard = ({ weddingData, language }: { weddingData: WeddingDetails | null; language: Language }) => {
+const InvitationCard = ({ weddingData, language, t }: { weddingData: WeddingDetails | null; language: Language; t: typeof translations.en }) => {
   if (!weddingData) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -194,8 +254,6 @@ const InvitationCard = ({ weddingData, language }: { weddingData: WeddingDetails
   const withPleasureText = language === 'en' ? weddingData.with_pleasure_text_en : weddingData.with_pleasure_text_ms;
   const togetherWithText = language === 'en' ? weddingData.together_with_text_en : weddingData.together_with_text_ms;
   const invitationMessage = language === 'en' ? weddingData.invitation_message_en : weddingData.invitation_message_ms;
-  const groomTitle = language === 'en' ? weddingData.groom_title_en : weddingData.groom_title_ms;
-  const brideTitle = language === 'en' ? weddingData.bride_title_en : weddingData.bride_title_ms;
   const weddingDate = language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms;
 
   return (
@@ -215,25 +273,24 @@ const InvitationCard = ({ weddingData, language }: { weddingData: WeddingDetails
       {/* Groom's parents */}
       <div className="space-y-1">
         <h3 className="text-lg font-bold text-green-800">{weddingData.groom_father_name}</h3>
-        <p className="text-sm text-gray-600">{groomTitle}</p>
+        <p className="text-sm text-gray-600">{t.groomFatherTitle}</p>
         <div className="text-lg font-semibold">&</div>
         <h3 className="text-lg font-bold text-green-800">{weddingData.groom_mother_name}</h3>
-        <p className="text-sm text-gray-600">{brideTitle}</p>
+        <p className="text-sm text-gray-600">{t.groomMotherTitle}</p>
       </div>
 
       {/* Together with */}
       <div className="space-y-2">
         <p className="text-base text-gray-700 italic">{togetherWithText}</p>
-        <p className="text-sm">{language === 'en' ? 'with' : 'dengan'}</p>
       </div>
 
       {/* Bride's parents */}
       <div className="space-y-1">
         <h3 className="text-lg font-bold text-green-800">{weddingData.bride_father_name}</h3>
-        <p className="text-sm text-gray-600">{language === 'en' ? 'Ayah Pengantin Perempuan' : 'Ayah Pengantin Perempuan'}</p>
+        <p className="text-sm text-gray-600">{t.brideFatherTitle}</p>
         <div className="text-lg font-semibold">&</div>
         <h3 className="text-lg font-bold text-green-800">{weddingData.bride_mother_name}</h3>
-        <p className="text-sm text-gray-600">{language === 'en' ? 'Ibu Pengantin Perempuan' : 'Ibu Pengantin Perempuan'}</p>
+        <p className="text-sm text-gray-600">{t.brideMotherTitle}</p>
       </div>
 
       {/* Invitation message */}
@@ -260,8 +317,8 @@ const InvitationCard = ({ weddingData, language }: { weddingData: WeddingDetails
       {/* Time */}
       <div className="space-y-2 text-sm text-gray-600">
         <div>
-          <p className="font-medium">{language === 'en' ? 'Ceremony' : 'Akad Nikah'}: {weddingData.ceremony_time_start} - {weddingData.ceremony_time_end}</p>
-          <p className="font-medium">{language === 'en' ? 'Reception' : 'Walimatul Urus'}: {weddingData.reception_time_start} - {weddingData.reception_time_end}</p>
+          <p className="font-medium">{t.ceremony}: {weddingData.ceremony_time_start} - {weddingData.ceremony_time_end}</p>
+          <p className="font-medium">{t.reception}: {weddingData.reception_time_start} - {weddingData.reception_time_end}</p>
         </div>
       </div>
 
@@ -269,10 +326,7 @@ const InvitationCard = ({ weddingData, language }: { weddingData: WeddingDetails
       <div className="pt-6">
         <div className="w-32 h-px bg-green-600 mx-auto mb-4" />
         <p className="text-xs text-gray-500 italic">
-          {language === 'en' 
-            ? 'Cordially invite you to join us at the Wedding Reception of our beloved children' 
-            : 'Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami'
-          }
+          {t.cordiallyInvite}
         </p>
       </div>
     </div>
@@ -294,12 +348,12 @@ const CalendarModal = ({ t, weddingData, language }: { t: typeof translations.en
 
   // Function to open Google Calendar
   const openGoogleCalendar = () => {
-    const eventTitle = `Wedding ${weddingData.groom_name} & ${weddingData.bride_name}`;
+    const eventTitle = `${t.wedding} ${weddingData.groom_name} & ${weddingData.bride_name}`;
     const eventTitleEncoded = encodeURIComponent(eventTitle);
     const startDate = '20251227T100000'; // We'll use default for now, could be enhanced to parse actual times
     const endDate = '20251227T160000';
     const location = encodeURIComponent(`${weddingData.venue_name}, ${weddingData.venue_address}`);
-    const details = encodeURIComponent(`Wedding Invitation\n\n${weddingData.groom_name} & ${weddingData.bride_name}\n\nCeremony: ${weddingData.ceremony_time_start} - ${weddingData.ceremony_time_end}\nReception: ${weddingData.reception_time_start} - ${weddingData.reception_time_end}\n\nVenue: ${weddingData.venue_name}`);
+    const details = encodeURIComponent(`${t.weddingInvitationText}\n\n${weddingData.groom_name} & ${weddingData.bride_name}\n\n${t.ceremonySummary}: ${weddingData.ceremony_time_start} - ${weddingData.ceremony_time_end}\n${t.receptionSummary}: ${weddingData.reception_time_start} - ${weddingData.reception_time_end}\n\n${t.venue}: ${weddingData.venue_name}`);
     
     const googleCalendarUrl = `https://calendar.google.com/calendar/u/0/r/eventedit?text=${eventTitleEncoded}&dates=${startDate}/${endDate}&details=${details}&location=${location}&trp=true&sf=true&output=xml`;
     
@@ -316,7 +370,7 @@ const CalendarModal = ({ t, weddingData, language }: { t: typeof translations.en
 
   // Function to generate and download .ics file for Apple Calendar
   const downloadICSFile = () => {
-    const eventTitle = `Wedding ${weddingData.groom_name} & ${weddingData.bride_name}`;
+    const eventTitle = `${t.wedding} ${weddingData.groom_name} & ${weddingData.bride_name}`;
     const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Wedding//Ekad//EN
@@ -325,7 +379,7 @@ DTSTART:20251227T100000
 DTEND:20251227T160000
 LOCATION:${weddingData.venue_name}, ${weddingData.venue_address}
 SUMMARY:${eventTitle}
-DESCRIPTION:Wedding Invitation\\n\\n${weddingData.groom_name} & ${weddingData.bride_name}\\n\\nCeremony: ${weddingData.ceremony_time_start} - ${weddingData.ceremony_time_end}\\nReception: ${weddingData.reception_time_start} - ${weddingData.reception_time_end}\\n\\nVenue: ${weddingData.venue_name}
+DESCRIPTION:${t.weddingInvitationText}\\n\\n${weddingData.groom_name} & ${weddingData.bride_name}\\n\\n${t.ceremonySummary}: ${weddingData.ceremony_time_start} - ${weddingData.ceremony_time_end}\\n${t.receptionSummary}: ${weddingData.reception_time_start} - ${weddingData.reception_time_end}\\n\\n${t.venue}: ${weddingData.venue_name}
 URL;VALUE=URI:${window.location.origin}
 END:VEVENT
 END:VCALENDAR`;
@@ -485,7 +539,7 @@ const ContactModal = ({ t, weddingData }: { t: typeof translations.en; weddingDa
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                <span>Call</span>
+                <span>{t.call}</span>
               </a>
               
               {/* WhatsApp Button */}
@@ -498,7 +552,7 @@ const ContactModal = ({ t, weddingData }: { t: typeof translations.en; weddingDa
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.390"/>
                 </svg>
-                <span>WhatsApp</span>
+                <span>{t.whatsapp}</span>
               </a>
             </div>
           </div>
@@ -566,10 +620,7 @@ const RSVPModal = ({ t, weddingData, language }: { t: typeof translations.en; we
 
   const handleDeclineClick = () => {
     // You could add decline tracking here if needed
-    alert(language === 'en' 
-      ? 'Thank you for letting us know. We hope to see you at future celebrations!' 
-      : 'Terima kasih kerana memberitahu kami. Kami berharap dapat bertemu anda di majlis akan datang!'
-    );
+    alert(t.declineMessage);
   };
 
   if (showForm) {
@@ -902,7 +953,7 @@ export default function HomePage() {
               {/* Desktop Note - Hidden on Mobile */}
               <div className="hidden md:block absolute top-4 left-1/2 transform -translate-x-1/2 z-30">
                 <div className="bg-white/90 backdrop-blur-sm text-green-800 text-sm px-4 py-2 rounded-full shadow-lg border border-green-100">
-                  💍 Best viewed on mobile • Scroll down for navigation
+                  {t.bestViewedMobile}
                 </div>
               </div>
               
@@ -911,7 +962,7 @@ export default function HomePage() {
                 <div className="absolute inset-0 z-0 overflow-hidden md:rounded-3xl">
                   <Image
                     src="/assets/images/bg.webp"
-                    alt="Wedding Background"
+                    alt={t.weddingBackgroundAlt}
                     layout="fill"
                     objectFit="cover"
                     priority
@@ -927,7 +978,7 @@ export default function HomePage() {
                       <div className="text-4xl mb-4 text-black">☪</div>
                       <div className="w-24 h-px bg-black/60 mx-auto mb-2" />
                       <div className="text-sm tracking-widest opacity-80 text-black">
-                        {weddingData ? (language === 'en' ? weddingData.event_type_en : weddingData.event_type_ms) : 'WALIMATUL URUS'}
+                        {weddingData ? (language === 'en' ? weddingData.event_type_en : weddingData.event_type_ms) : t.walimatul}
                       </div>
                       <div className="text-xs opacity-60 italic text-black">{t.weddingInvitation}</div>
                       <div className="w-24 h-px bg-black/60 mx-auto mt-2" />
@@ -944,11 +995,11 @@ export default function HomePage() {
                       ) : (
                         <>
                           <h1 className="text-4xl md:text-5xl font-script font-bold mb-2 text-green-100 leading-tight">
-                            {weddingData?.groom_name || 'Hafiz'}
+                            {weddingData?.groom_name || t.defaultGroomName}
                           </h1>
                           <div className="text-2xl md:text-3xl mb-2 opacity-80 font-script">&</div>
                           <h1 className="text-4xl md:text-5xl font-script font-bold text-green-100 leading-tight">
-                            {weddingData?.bride_name || 'Afini'}
+                            {weddingData?.bride_name || t.defaultBrideName}
                           </h1>
                         </>
                       )}
@@ -1104,7 +1155,7 @@ export default function HomePage() {
             {/* Invitation Card */}
             <div className="min-h-[calc(100vh-80px)] flex items-center justify-center p-4">
               <div className="w-full max-w-md mx-auto">
-                <InvitationCard weddingData={weddingData} language={language} />
+                <InvitationCard weddingData={weddingData} language={language} t={t} />
               </div>
             </div>
           </div>

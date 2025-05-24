@@ -11,11 +11,11 @@ import { auditDatabaseOperation, monitorQuery, validateQueryParams } from '@/lib
 // Users MUST set SECRET_COOKIE_PASSWORD environment variable - no fallback provided for security
 export const sessionOptions = {
   password: process.env.SECRET_COOKIE_PASSWORD,
-  cookieName: "__Host-wedding-admin-session", // __Host- prefix provides additional security
+  cookieName: process.env.NODE_ENV === 'production' ? "__Host-wedding-admin-session" : "wedding-admin-session", // __Host- prefix only for production HTTPS
   cookieOptions: {
-    secure: true, // Always require HTTPS (even in development for security)
+    secure: process.env.NODE_ENV === 'production', // Only require HTTPS in production
     httpOnly: true, // Prevent XSS attacks - cookie not accessible via JavaScript
-    sameSite: "strict" as const, // Prevent CSRF attacks
+    sameSite: "lax" as const, // Less strict than "strict" but still secure - allows normal navigation
     maxAge: 60 * 60 * 2, // 2 hours instead of 1 week
     path: "/", // Explicit path setting
   },
@@ -259,8 +259,22 @@ export const adminAuth = {
       session.isLoggedIn = true;
       session.lastActivity = Date.now(); // Set initial activity timestamp
       
+      // Debug logging for development
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Setting session data:', {
+          userId: session.userId,
+          username: session.username,
+          isLoggedIn: session.isLoggedIn,
+          lastActivity: session.lastActivity
+        });
+      }
+      
       // Save the session
       await session.save();
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Session saved successfully');
+      }
       
       return { success: true, user: { id: user.id.toString(), username: user.username } };
     } catch (error) {
@@ -281,11 +295,25 @@ export const adminAuth = {
     session.destroy();
   },
 
-  // Check if user is authenticated
-  async isAuthenticated() {
+  // Check if user is authenticated (safe for page components - read-only)
+  async isAuthenticatedReadOnly() {
     const session = await getSession();
     
+    // Debug logging for development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Session state:', {
+        isLoggedIn: session.isLoggedIn,
+        userId: session.userId,
+        username: session.username,
+        lastActivity: session.lastActivity,
+        lastActivityDate: session.lastActivity ? new Date(session.lastActivity).toISOString() : null
+      });
+    }
+    
     if (!session.isLoggedIn || !session.userId) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Authentication failed: missing isLoggedIn or userId');
+      }
       return false;
     }
     
@@ -294,20 +322,67 @@ export const adminAuth = {
     const sessionTimeout = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
     
     if (session.lastActivity && (now - session.lastActivity > sessionTimeout)) {
-      // Session expired, clear it
-      session.userId = undefined;
-      session.username = undefined;
-      session.isLoggedIn = false;
-      session.lastActivity = undefined;
-      await session.save();
+      // Session expired - return false but don't modify session here
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Session expired:', {
+          lastActivity: session.lastActivity,
+          now,
+          timeDiff: now - session.lastActivity,
+          timeout: sessionTimeout
+        });
+      }
       return false;
     }
     
-    // Update last activity
-    session.lastActivity = now;
-    await session.save();
-    
     return true;
+  },
+
+  // Check if user is authenticated (for route handlers - can modify cookies)
+  async isAuthenticated() {
+    const isAuth = await this.isAuthenticatedReadOnly();
+    if (!isAuth) {
+      return false;
+    }
+    
+    // Try to update session activity if possible (route handlers)
+    await this.updateSessionActivity();
+    return true;
+  },
+
+  // Update session activity (only call from route handlers/server actions)
+  async updateSessionActivity() {
+    try {
+      const session = await getSession();
+      
+      if (!session.isLoggedIn || !session.userId) {
+        return false;
+      }
+      
+      // Check session timeout
+      const now = Date.now();
+      const sessionTimeout = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+      
+      if (session.lastActivity && (now - session.lastActivity > sessionTimeout)) {
+        // Session expired, clear it
+        session.userId = undefined;
+        session.username = undefined;
+        session.isLoggedIn = false;
+        session.lastActivity = undefined;
+        await session.save();
+        return false;
+      }
+      
+      // Update last activity
+      session.lastActivity = now;
+      await session.save();
+      
+      return true;
+    } catch (error) {
+      // If we can't update session (e.g., called from page component), just return true
+      // The read-only check has already passed
+      console.warn('Could not update session activity:', error);
+      return true;
+    }
   },
 
   // Get current admin user
@@ -320,12 +395,16 @@ export const adminAuth = {
   }
 };
 
-// Middleware to protect admin routes
+// Middleware to protect admin routes (call from route handlers only)
 export async function requireAdmin() {
   const isAuth = await adminAuth.isAuthenticated();
   if (!isAuth) {
     throw new Error('Unauthorized - Admin access required');
   }
+  
+  // Update session activity since this is called from route handlers
+  await adminAuth.updateSessionActivity();
+  
   return true;
 }
 

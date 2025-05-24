@@ -2,6 +2,18 @@ import { adminAuth } from '@/lib/auth';
 
 export async function GET() {
   try {
+    // Check authentication first
+    const isAuth = await adminAuth.isAuthenticated();
+    if (!isAuth) {
+      return Response.json(
+        { error: 'Not authenticated' }, 
+        { status: 401 }
+      );
+    }
+    
+    // Update session activity since this is a route handler
+    await adminAuth.updateSessionActivity();
+    
     const currentUser = await adminAuth.getCurrentUser();
     
     if (!currentUser) {

@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 
 export default async function AdminLoginPage() {
   // If user is already authenticated, redirect to admin dashboard
-  const isAuthenticated = await adminAuth.isAuthenticated();
+  const isAuthenticated = await adminAuth.isAuthenticatedReadOnly();
   if (isAuthenticated) {
     redirect('/admin');
   }

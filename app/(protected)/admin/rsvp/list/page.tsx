@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 
 export default async function RSVPListPage() {
   // Check if user is authenticated
-  const isAuthenticated = await adminAuth.isAuthenticated();
+  const isAuthenticated = await adminAuth.isAuthenticatedReadOnly();
   if (!isAuthenticated) {
     redirect('/admin/login');
   }

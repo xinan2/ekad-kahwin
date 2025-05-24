@@ -5,7 +5,7 @@ import AdminDashboard from '@/components/AdminDashboard';
 export default async function AdminPage() {
   try {
     // Check authentication
-    const isAuthenticated = await adminAuth.isAuthenticated();
+    const isAuthenticated = await adminAuth.isAuthenticatedReadOnly();
     if (!isAuthenticated) {
       redirect('/admin/login');
     }
