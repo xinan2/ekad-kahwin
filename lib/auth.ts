@@ -90,6 +90,9 @@ export interface WeddingDetails {
   invitation_message_ms: string;
   cordially_invite_text_en: string;
   cordially_invite_text_ms: string;
+  qr_code_url: string;
+  qr_owner_name: string;
+  qr_bank_name: string;
   updated_at: string;
 }
 
@@ -113,10 +116,10 @@ async function initializeDefaultWeddingDetails() {
         bride_name: 'NURAFINI BINTI KHARUL ANUAR',
         wedding_date: 'December 20, 2025',
         wedding_date_ms: '20 Disember 2025',
-        ceremony_time_start: '2:00 PM',
-        ceremony_time_end: '3:00 PM',
-        reception_time_start: '8:00 PM',
-        reception_time_end: '10:00 PM',
+        ceremony_time_start: '',
+        ceremony_time_end: '',
+        reception_time_start: '',
+        reception_time_end: '',
         venue_name: 'Dewan Seri Budiman',
         venue_address: '123 Wedding Street, Kuala Lumpur',
         venue_google_maps_url: '',
@@ -166,6 +169,9 @@ async function initializeDefaultWeddingDetails() {
         invitation_message_ms: 'menjemput Yang Berbahagia ke majlis perkahwinan anakanda kami',
         cordially_invite_text_en: 'Cordially invite you to join us at the Wedding Reception of our beloved children',
         cordially_invite_text_ms: 'Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami',
+        qr_code_url: '',
+        qr_owner_name: '',
+        qr_bank_name: '',
       });
     }
   } catch (error) {
@@ -427,10 +433,10 @@ export const weddingDetails = {
         bride_name: details.bride_name,
         wedding_date: details.wedding_date,
         wedding_date_ms: details.wedding_date_ms,
-        ceremony_time_start: details.ceremony_time_start,
-        ceremony_time_end: details.ceremony_time_end,
-        reception_time_start: details.reception_time_start,
-        reception_time_end: details.reception_time_end,
+        ceremony_time_start: details.ceremony_time_start || '',
+        ceremony_time_end: details.ceremony_time_end || '',
+        reception_time_start: details.reception_time_start || '',
+        reception_time_end: details.reception_time_end || '',
         venue_name: details.venue_name,
         venue_address: details.venue_address,
         venue_google_maps_url: details.venue_google_maps_url || '',
@@ -480,6 +486,9 @@ export const weddingDetails = {
         invitation_message_ms: details.invitation_message_ms || 'menjemput Yang Berbahagia ke majlis perkahwinan anakanda kami',
         cordially_invite_text_en: details.cordially_invite_text_en || 'Cordially invite you to join us at the Wedding Reception of our beloved children',
         cordially_invite_text_ms: details.cordially_invite_text_ms || 'Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami',
+        qr_code_url: details.qr_code_url || '',
+        qr_owner_name: details.qr_owner_name || '',
+        qr_bank_name: details.qr_bank_name || '',
         updated_at: details.updated_at.toISOString(),
       };
     } catch (error) {

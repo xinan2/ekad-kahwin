@@ -8,6 +8,27 @@
       "when": 1748069645341,
       "tag": "0000_typical_ted_forrester",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1748101259128,
+      "tag": "0001_serious_bullseye",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748103358708,
+      "tag": "0002_bumpy_nomad",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1748104042320,
+      "tag": "0003_tough_genesis",
+      "breakpoints": true
     }
   ]
 }

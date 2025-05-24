@@ -1,0 +1,536 @@
+{
+  "id": "6c48f70b-23ef-4b33-a6c9-5f11b0cbb729",
+  "prevId": "a57c2389-3274-4039-b815-088cef1fd3a3",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.admin_users": {
+      "name": "admin_users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "admin_users_username_unique": {
+          "name": "admin_users_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.rsvp_responses": {
+      "name": "rsvp_responses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pax": {
+          "name": "pax",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "submitted_at": {
+          "name": "submitted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.wedding_details": {
+      "name": "wedding_details",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "groom_name": {
+          "name": "groom_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bride_name": {
+          "name": "bride_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wedding_date": {
+          "name": "wedding_date",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wedding_date_ms": {
+          "name": "wedding_date_ms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ceremony_time_start": {
+          "name": "ceremony_time_start",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "ceremony_time_end": {
+          "name": "ceremony_time_end",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "reception_time_start": {
+          "name": "reception_time_start",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "reception_time_end": {
+          "name": "reception_time_end",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "venue_name": {
+          "name": "venue_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "venue_address": {
+          "name": "venue_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "venue_google_maps_url": {
+          "name": "venue_google_maps_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "contact1_name": {
+          "name": "contact1_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact1_phone": {
+          "name": "contact1_phone",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact1_label_en": {
+          "name": "contact1_label_en",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact1_label_ms": {
+          "name": "contact1_label_ms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact2_name": {
+          "name": "contact2_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact2_phone": {
+          "name": "contact2_phone",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact2_label_en": {
+          "name": "contact2_label_en",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact2_label_ms": {
+          "name": "contact2_label_ms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact3_name": {
+          "name": "contact3_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "contact3_phone": {
+          "name": "contact3_phone",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "contact3_label_en": {
+          "name": "contact3_label_en",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "contact3_label_ms": {
+          "name": "contact3_label_ms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "contact4_name": {
+          "name": "contact4_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "contact4_phone": {
+          "name": "contact4_phone",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "contact4_label_en": {
+          "name": "contact4_label_en",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "contact4_label_ms": {
+          "name": "contact4_label_ms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "rsvp_deadline": {
+          "name": "rsvp_deadline",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rsvp_deadline_ms": {
+          "name": "rsvp_deadline_ms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "event_type_en": {
+          "name": "event_type_en",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "event_type_ms": {
+          "name": "event_type_ms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dress_code_en": {
+          "name": "dress_code_en",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dress_code_ms": {
+          "name": "dress_code_ms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parking_info_en": {
+          "name": "parking_info_en",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parking_info_ms": {
+          "name": "parking_info_ms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "food_info_en": {
+          "name": "food_info_en",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "food_info_ms": {
+          "name": "food_info_ms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invitation_note_en": {
+          "name": "invitation_note_en",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invitation_note_ms": {
+          "name": "invitation_note_ms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "groom_title_en": {
+          "name": "groom_title_en",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "groom_title_ms": {
+          "name": "groom_title_ms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "bride_title_en": {
+          "name": "bride_title_en",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "bride_title_ms": {
+          "name": "bride_title_ms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "groom_father_name": {
+          "name": "groom_father_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "groom_mother_name": {
+          "name": "groom_mother_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "bride_father_name": {
+          "name": "bride_father_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "bride_mother_name": {
+          "name": "bride_mother_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "bismillah_text_en": {
+          "name": "bismillah_text_en",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'In the name of Allah, the Most Gracious, the Most Merciful'"
+        },
+        "bismillah_text_ms": {
+          "name": "bismillah_text_ms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Dengan nama Allah Yang Maha Pemurah lagi Maha Penyayang'"
+        },
+        "with_pleasure_text_en": {
+          "name": "with_pleasure_text_en",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'With great pleasure, we'"
+        },
+        "with_pleasure_text_ms": {
+          "name": "with_pleasure_text_ms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Dengan penuh kesyukuran, kami'"
+        },
+        "together_with_text_en": {
+          "name": "together_with_text_en",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'together with'"
+        },
+        "together_with_text_ms": {
+          "name": "together_with_text_ms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'bersama'"
+        },
+        "invitation_message_en": {
+          "name": "invitation_message_en",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'cordially invite you to join us at the Wedding Reception of our beloved children'"
+        },
+        "invitation_message_ms": {
+          "name": "invitation_message_ms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'menjemput Yang Berbahagia ke majlis perkahwinan anakanda kami'"
+        },
+        "cordially_invite_text_en": {
+          "name": "cordially_invite_text_en",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Cordially invite you to join us at the Wedding Reception of our beloved children'"
+        },
+        "cordially_invite_text_ms": {
+          "name": "cordially_invite_text_ms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami'"
+        },
+        "qr_code_url": {
+          "name": "qr_code_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "qr_owner_name": {
+          "name": "qr_owner_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "qr_bank_name": {
+          "name": "qr_bank_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

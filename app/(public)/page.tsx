@@ -24,6 +24,7 @@ const translations = {
     rsvp: 'RSVP',
     note: 'Notes',
     language: 'Language',
+    gift: 'Gift',
     
     // New buttons
     viewInvitation: 'View Invitation',
@@ -60,6 +61,13 @@ const translations = {
     parking: '• Parking available',
     halal: '• Halal food provided',
     invitation: '• Please bring this invitation',
+    
+    // Gift Modal
+    giftTitle: 'Wedding Gift',
+    giftMessage: 'Your presence is our present, but if you wish to give a gift:',
+    scanQR: 'Scan QR Code for Online Transfer',
+    accountOwner: 'Account Owner',
+    bankName: 'Bank',
     
     // Language Modal
     selectLanguage: 'Select Language',
@@ -110,6 +118,7 @@ const translations = {
     rsvp: 'RSVP',
     note: 'Nota',
     language: 'Bahasa',
+    gift: 'Hadiah',
     
     // New buttons
     viewInvitation: 'Lihat Jemputan',
@@ -146,6 +155,13 @@ const translations = {
     parking: '• Tempat letak kereta tersedia',
     halal: '• Hidangan halal disediakan',
     invitation: '• Sila bawa jemputan ini',
+    
+    // Gift Modal
+    giftTitle: 'Hadiah Pernikahan',
+    giftMessage: 'Kehadiran anda adalah hadiah untuk kami, tetapi jika anda ingin memberikan hadiah:',
+    scanQR: 'Imbas Kod QR untuk Transfer Online',
+    accountOwner: 'Pemilik Akaun',
+    bankName: 'Bank',
     
     // Language Modal
     selectLanguage: 'Pilih Bahasa',
@@ -210,18 +226,6 @@ const RSVPIcon = () => (
   </svg>
 );
 
-const NoteIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-  </svg>
-);
-
-const LanguageIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-);
-
 const CloseIcon = () => (
   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -237,6 +241,14 @@ const InvitationIcon = () => (
 const BackIcon = () => (
   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+  </svg>
+);
+
+const GiftIcon = () => (
+  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <rect x="3" y="8" width="18" height="4" rx="1" strokeWidth={2}/>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8V21M7 8V21h10V8M12 8V4m-3 4h6" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 4c0-1.1.9-2 2-2s2 .9 2 2-2 2-2 2-2-.9-2-2zm6 0c0-1.1.9-2 2-2s2 .9 2 2-2 2-2 2-2-.9-2-2z" />
   </svg>
 );
 
@@ -317,8 +329,12 @@ const InvitationCard = ({ weddingData, language, t }: { weddingData: WeddingDeta
       {/* Time */}
       <div className="space-y-2 text-sm text-gray-600">
         <div>
-          <p className="font-medium">{t.ceremony}: {weddingData.ceremony_time_start} - {weddingData.ceremony_time_end}</p>
-          <p className="font-medium">{t.reception}: {weddingData.reception_time_start} - {weddingData.reception_time_end}</p>
+          {weddingData.ceremony_time_start && weddingData.ceremony_time_end && (
+            <p className="font-medium">{t.ceremony}: {weddingData.ceremony_time_start} - {weddingData.ceremony_time_end}</p>
+          )}
+          {weddingData.reception_time_start && weddingData.reception_time_end && (
+            <p className="font-medium">{t.reception}: {weddingData.reception_time_start} - {weddingData.reception_time_end}</p>
+          )}
         </div>
       </div>
 
@@ -353,7 +369,21 @@ const CalendarModal = ({ t, weddingData, language }: { t: typeof translations.en
     const startDate = '20251227T100000'; // We'll use default for now, could be enhanced to parse actual times
     const endDate = '20251227T160000';
     const location = encodeURIComponent(`${weddingData.venue_name}, ${weddingData.venue_address}`);
-    const details = encodeURIComponent(`${t.weddingInvitationText}\n\n${weddingData.groom_name} & ${weddingData.bride_name}\n\n${t.ceremonySummary}: ${weddingData.ceremony_time_start} - ${weddingData.ceremony_time_end}\n${t.receptionSummary}: ${weddingData.reception_time_start} - ${weddingData.reception_time_end}\n\n${t.venue}: ${weddingData.venue_name}`);
+    
+    // Build details with conditional ceremony and reception information
+    let eventDetails = `${t.weddingInvitationText}\n\n${weddingData.groom_name} & ${weddingData.bride_name}`;
+    
+    if (weddingData.ceremony_time_start && weddingData.ceremony_time_end) {
+      eventDetails += `\n\n${t.ceremonySummary}: ${weddingData.ceremony_time_start} - ${weddingData.ceremony_time_end}`;
+    }
+    
+    if (weddingData.reception_time_start && weddingData.reception_time_end) {
+      eventDetails += `\n${t.receptionSummary}: ${weddingData.reception_time_start} - ${weddingData.reception_time_end}`;
+    }
+    
+    eventDetails += `\n\n${t.venue}: ${weddingData.venue_name}`;
+    
+    const details = encodeURIComponent(eventDetails);
     
     const googleCalendarUrl = `https://calendar.google.com/calendar/u/0/r/eventedit?text=${eventTitleEncoded}&dates=${startDate}/${endDate}&details=${details}&location=${location}&trp=true&sf=true&output=xml`;
     
@@ -371,6 +401,20 @@ const CalendarModal = ({ t, weddingData, language }: { t: typeof translations.en
   // Function to generate and download .ics file for Apple Calendar
   const downloadICSFile = () => {
     const eventTitle = `${t.wedding} ${weddingData.groom_name} & ${weddingData.bride_name}`;
+    
+    // Build description with conditional ceremony and reception information
+    let eventDescription = `${t.weddingInvitationText}\\n\\n${weddingData.groom_name} & ${weddingData.bride_name}`;
+    
+    if (weddingData.ceremony_time_start && weddingData.ceremony_time_end) {
+      eventDescription += `\\n\\n${t.ceremonySummary}: ${weddingData.ceremony_time_start} - ${weddingData.ceremony_time_end}`;
+    }
+    
+    if (weddingData.reception_time_start && weddingData.reception_time_end) {
+      eventDescription += `\\n${t.receptionSummary}: ${weddingData.reception_time_start} - ${weddingData.reception_time_end}`;
+    }
+    
+    eventDescription += `\\n\\n${t.venue}: ${weddingData.venue_name}`;
+    
     const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Wedding//Ekad//EN
@@ -379,7 +423,7 @@ DTSTART:20251227T100000
 DTEND:20251227T160000
 LOCATION:${weddingData.venue_name}, ${weddingData.venue_address}
 SUMMARY:${eventTitle}
-DESCRIPTION:${t.weddingInvitationText}\\n\\n${weddingData.groom_name} & ${weddingData.bride_name}\\n\\n${t.ceremonySummary}: ${weddingData.ceremony_time_start} - ${weddingData.ceremony_time_end}\\n${t.receptionSummary}: ${weddingData.reception_time_start} - ${weddingData.reception_time_end}\\n\\n${t.venue}: ${weddingData.venue_name}
+DESCRIPTION:${eventDescription}
 URL;VALUE=URI:${window.location.origin}
 END:VEVENT
 END:VCALENDAR`;
@@ -400,16 +444,20 @@ END:VCALENDAR`;
       
       {/* Event Details */}
       <div className="space-y-3 mb-6">
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <h4 className="font-semibold text-green-700 mb-2">{t.weddingCeremony}</h4>
-          <p className="text-green-600">{ceremonyDateTime}</p>
-          <p className="text-green-600">{weddingData.ceremony_time_start} - {weddingData.ceremony_time_end}</p>
-        </div>
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <h4 className="font-semibold text-green-700 mb-2">{t.weddingReception}</h4>
-          <p className="text-green-600">{receptionDateTime}</p>
-          <p className="text-green-600">{weddingData.reception_time_start} - {weddingData.reception_time_end}</p>
-        </div>
+        {weddingData.ceremony_time_start && weddingData.ceremony_time_end && (
+          <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+            <h4 className="font-semibold text-green-700 mb-2">{t.weddingCeremony}</h4>
+            <p className="text-green-600">{ceremonyDateTime}</p>
+            <p className="text-green-600">{weddingData.ceremony_time_start} - {weddingData.ceremony_time_end}</p>
+          </div>
+        )}
+        {weddingData.reception_time_start && weddingData.reception_time_end && (
+          <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+            <h4 className="font-semibold text-green-700 mb-2">{t.weddingReception}</h4>
+            <p className="text-green-600">{receptionDateTime}</p>
+            <p className="text-green-600">{weddingData.reception_time_start} - {weddingData.reception_time_end}</p>
+          </div>
+        )}
       </div>
 
       {/* Calendar Invitation Buttons */}
@@ -442,7 +490,7 @@ END:VCALENDAR`;
   );
 };
 
-const ContactModal = ({ t, weddingData }: { t: typeof translations.en; weddingData: WeddingDetails | null }) => {
+const ContactModal = ({ t, weddingData, language }: { t: typeof translations.en; weddingData: WeddingDetails | null; language: Language }) => {
   if (!weddingData) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -520,44 +568,59 @@ const ContactModal = ({ t, weddingData }: { t: typeof translations.en; weddingDa
     }
   ];
 
+  // Filter contacts to only show those with valid data
+  const validContacts = contacts.filter(contact => 
+    contact.name && contact.phone && 
+    contact.name.trim() !== '' && contact.phone.trim() !== ''
+  );
+
   return (
     <div className="space-y-4">
       <h3 className="text-xl font-semibold text-center text-green-800 mb-4">{t.contactUs}</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
-        {contacts.map((contact, index) => (
-          <div key={index} className="bg-green-50 p-4 rounded-lg border border-green-200">
-            <h4 className="font-semibold text-green-700 text-sm mb-1">{contact.label}</h4>
-            <p className="text-green-600 font-medium mb-3">{contact.name}</p>
-            
-            {/* Contact Buttons */}
-            <div className="flex space-x-2">
-              {/* Phone Call Button */}
-              <a 
-                href={getPhoneUrl(contact.phone)}
-                className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors flex-1 text-sm"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-                <span>{t.call}</span>
-              </a>
+      
+      {validContacts.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
+          {validContacts.map((contact, index) => (
+            <div key={index} className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-semibold text-green-700 text-sm mb-1">{contact.label}</h4>
+              <p className="text-green-600 font-medium mb-3">{contact.name}</p>
               
-              {/* WhatsApp Button */}
-              <a 
-                href={getWhatsAppUrl(contact.phone)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition-colors flex-1 text-sm"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.390"/>
-                </svg>
-                <span>{t.whatsapp}</span>
-              </a>
+              {/* Contact Buttons */}
+              <div className="flex space-x-2">
+                {/* Phone Call Button */}
+                <a 
+                  href={getPhoneUrl(contact.phone)}
+                  className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors flex-1 text-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  <span>{t.call}</span>
+                </a>
+                
+                {/* WhatsApp Button */}
+                <a 
+                  href={getWhatsAppUrl(contact.phone)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition-colors flex-1 text-sm"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.390"/>
+                  </svg>
+                  <span>{t.whatsapp}</span>
+                </a>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <p className="text-green-600">
+            {language === 'en' ? 'Contact information will be available soon.' : 'Maklumat hubungan akan tersedia tidak lama lagi.'}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
@@ -696,6 +759,68 @@ const NoteModal = ({ t, weddingData, language }: { t: typeof translations.en; we
           </div>
         ))}
       </div>
+    </div>
+  );
+};
+
+const GiftModal = ({ t, weddingData, language }: { t: typeof translations.en; weddingData: WeddingDetails | null; language: Language }) => {
+  if (!weddingData) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+      </div>
+    );
+  }
+
+  // Check if QR code data is available
+  const hasQRData = weddingData.qr_code_url || weddingData.qr_owner_name || weddingData.qr_bank_name;
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-xl font-semibold text-center text-green-800 mb-4">{t.giftTitle}</h3>
+      
+      {hasQRData ? (
+        <div className="space-y-4 text-center">
+          <p className="text-green-600 mb-4">{t.giftMessage}</p>
+          
+          {/* QR Code Image */}
+          {weddingData.qr_code_url && (
+            <div className="bg-white p-4 rounded-lg border border-green-200 shadow-sm">
+              <img 
+                src={weddingData.qr_code_url} 
+                alt="QR Code for Payment"
+                className="mx-auto max-w-48 h-auto rounded"
+              />
+              <p className="text-sm text-green-600 mt-2">{t.scanQR}</p>
+            </div>
+          )}
+          
+          {/* Account Details */}
+          <div className="bg-green-50 p-4 rounded-lg border border-green-200 space-y-2">
+            {weddingData.qr_owner_name && (
+              <div>
+                <p className="text-sm text-green-700 font-medium">{t.accountOwner}:</p>
+                <p className="text-green-800 font-semibold">{weddingData.qr_owner_name}</p>
+              </div>
+            )}
+            {weddingData.qr_bank_name && (
+              <div>
+                <p className="text-sm text-green-700 font-medium">{t.bankName}:</p>
+                <p className="text-green-800 font-semibold">{weddingData.qr_bank_name}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <p className="text-green-600">
+            {t.giftMessage}
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            {language === 'en' ? 'Gift information will be available soon.' : 'Maklumat hadiah akan tersedia tidak lama lagi.'}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
@@ -893,13 +1018,15 @@ export default function HomePage() {
       case 'calendar':
         return <CalendarModal t={t} weddingData={weddingData} language={language} />;
       case 'contact':
-        return <ContactModal t={t} weddingData={weddingData} />;
+        return <ContactModal t={t} weddingData={weddingData} language={language} />;
       case 'location':
         return <LocationModal t={t} weddingData={weddingData} />;
       case 'rsvp':
         return <RSVPModal t={t} weddingData={weddingData} language={language} />;
       case 'note':
         return <NoteModal t={t} weddingData={weddingData} language={language} />;
+      case 'gift':
+        return <GiftModal t={t} weddingData={weddingData} language={language} />;
       case 'language':
         return <LanguageModal t={t} currentLanguage={language} onLanguageChange={handleLanguageChange} onClose={closeModal} />;
       default:
@@ -919,6 +1046,8 @@ export default function HomePage() {
         return t.rsvp;
       case 'note':
         return t.note;
+      case 'gift':
+        return t.giftTitle;
       case 'language':
         return t.language;
       default:
@@ -955,6 +1084,16 @@ export default function HomePage() {
                 <div className="bg-white/90 backdrop-blur-sm text-green-800 text-sm px-4 py-2 rounded-full shadow-lg border border-green-100">
                   {t.bestViewedMobile}
                 </div>
+              </div>
+              
+              {/* Floating Language Selector */}
+              <div className="absolute top-4 right-4 z-30">
+                <button
+                  onClick={() => setLanguage(language === 'en' ? 'ms' : 'en')}
+                  className="bg-white/90 backdrop-blur-sm text-green-800 text-sm font-bold px-3 py-2 rounded-full shadow-lg border border-green-100 hover:bg-white transition-all duration-200 hover:scale-105 active:scale-95 min-w-[50px]"
+                >
+                  {language.toUpperCase()}
+                </button>
               </div>
               
               <div className="w-full max-w-md mx-auto h-full md:min-h-screen flex flex-col md:my-8 md:rounded-3xl md:overflow-hidden md:shadow-2xl md:border md:border-white/20 relative">
@@ -1041,12 +1180,12 @@ export default function HomePage() {
                       }}></div>
                     </div>
                     
-                    {/* Navigation buttons - Now 6 columns */}
-                    <div className="relative grid grid-cols-6 gap-1 px-2 py-3">
+                    {/* Navigation buttons - Now 5 columns */}
+                    <div className="relative grid grid-cols-5 gap-0.5 px-1 py-3">
                       {/* Calendar */}
                       <button
                         onClick={() => openModal('calendar')}
-                        className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
                       >
                         <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
                           <CalendarIcon />
@@ -1059,7 +1198,7 @@ export default function HomePage() {
                       {/* Contact */}
                       <button
                         onClick={() => openModal('contact')}
-                        className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
                       >
                         <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
                           <ContactIcon />
@@ -1072,7 +1211,7 @@ export default function HomePage() {
                       {/* Location */}
                       <button
                         onClick={() => openModal('location')}
-                        className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
                       >
                         <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
                           <LocationIcon />
@@ -1085,7 +1224,7 @@ export default function HomePage() {
                       {/* RSVP */}
                       <button
                         onClick={() => openModal('rsvp')}
-                        className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
                       >
                         <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
                           <RSVPIcon />
@@ -1095,29 +1234,16 @@ export default function HomePage() {
                         </span>
                       </button>
 
-                      {/* Note */}
+                      {/* Gift */}
                       <button
-                        onClick={() => openModal('note')}
-                        className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        onClick={() => openModal('gift')}
+                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
                       >
                         <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
-                          <NoteIcon />
+                          <GiftIcon />
                         </div>
                         <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
-                          {t.note}
-                        </span>
-                      </button>
-
-                      {/* Language */}
-                      <button
-                        onClick={() => openModal('language')}
-                        className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                      >
-                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
-                          <LanguageIcon />
-                        </div>
-                        <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
-                          {t.language}
+                          {t.gift}
                         </span>
                       </button>
                     </div>

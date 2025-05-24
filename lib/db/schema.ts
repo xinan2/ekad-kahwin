@@ -51,10 +51,10 @@ export const WeddingDetailsSchema = z.object({
   bride_name: z.string().min(1, { message: 'Bride name is required' }),
   wedding_date: z.string().min(1, { message: 'Wedding date (EN) is required' }),
   wedding_date_ms: z.string().min(1, { message: 'Wedding date (MS) is required' }),
-  ceremony_time_start: z.string().min(1, { message: 'Ceremony start time is required' }),
-  ceremony_time_end: z.string().min(1, { message: 'Ceremony end time is required' }),
-  reception_time_start: z.string().min(1, { message: 'Reception start time is required' }),
-  reception_time_end: z.string().min(1, { message: 'Reception end time is required' }),
+  ceremony_time_start: z.string().default(''),
+  ceremony_time_end: z.string().default(''),
+  reception_time_start: z.string().default(''),
+  reception_time_end: z.string().default(''),
   venue_name: z.string().min(1, { message: 'Venue name is required' }),
   venue_address: z.string().min(1, { message: 'Venue address is required' }),
   venue_google_maps_url: z.string().default(''),
@@ -106,6 +106,11 @@ export const WeddingDetailsSchema = z.object({
   invitation_message_ms: z.string().default('menjemput Yang Berbahagia ke majlis perkahwinan anakanda kami'),
   cordially_invite_text_en: z.string().default('Cordially invite you to join us at the Wedding Reception of our beloved children'),
   cordially_invite_text_ms: z.string().default('Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami'),
+  
+  // Gift/QR Code fields
+  qr_code_url: z.string().default(''),
+  qr_owner_name: z.string().default(''),
+  qr_bank_name: z.string().default(''),
 });
 
 export type WeddingDetailsFormState = {
@@ -162,10 +167,10 @@ export const weddingDetails = pgTable('wedding_details', {
   bride_name: varchar('bride_name', { length: 255 }).notNull(),
   wedding_date: varchar('wedding_date', { length: 255 }).notNull(),
   wedding_date_ms: varchar('wedding_date_ms', { length: 255 }).notNull(),
-  ceremony_time_start: varchar('ceremony_time_start', { length: 100 }).notNull(),
-  ceremony_time_end: varchar('ceremony_time_end', { length: 100 }).notNull(),
-  reception_time_start: varchar('reception_time_start', { length: 100 }).notNull(),
-  reception_time_end: varchar('reception_time_end', { length: 100 }).notNull(),
+  ceremony_time_start: varchar('ceremony_time_start', { length: 100 }).default(''),
+  ceremony_time_end: varchar('ceremony_time_end', { length: 100 }).default(''),
+  reception_time_start: varchar('reception_time_start', { length: 100 }).default(''),
+  reception_time_end: varchar('reception_time_end', { length: 100 }).default(''),
   venue_name: varchar('venue_name', { length: 255 }).notNull(),
   venue_address: text('venue_address').notNull(),
   venue_google_maps_url: text('venue_google_maps_url').default(''),
@@ -215,6 +220,9 @@ export const weddingDetails = pgTable('wedding_details', {
   invitation_message_ms: text('invitation_message_ms').default('menjemput Yang Berbahagia ke majlis perkahwinan anakanda kami'),
   cordially_invite_text_en: text('cordially_invite_text_en').default('Cordially invite you to join us at the Wedding Reception of our beloved children'),
   cordially_invite_text_ms: text('cordially_invite_text_ms').default('Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami'),
+  qr_code_url: text('qr_code_url').default(''),
+  qr_owner_name: varchar('qr_owner_name', { length: 255 }).default(''),
+  qr_bank_name: varchar('qr_bank_name', { length: 255 }).default(''),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 });
 

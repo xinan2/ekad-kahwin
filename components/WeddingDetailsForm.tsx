@@ -146,10 +146,10 @@ const WeddingDetailsForm: React.FC<WeddingDetailsFormProps> = ({ initialDetails 
     { label: 'Bride Name', fieldName: 'bride_name' },
     { label: 'Wedding Date', fieldName: 'wedding_date', labelEnMs: true },
     { label: 'Wedding Date', fieldName: 'wedding_date_ms', labelEnMs: true },
-    { label: 'Ceremony Start Time', fieldName: 'ceremony_time_start', placeholder: 'e.g., 02:00 PM' },
-    { label: 'Ceremony End Time', fieldName: 'ceremony_time_end', placeholder: 'e.g., 03:00 PM' },
-    { label: 'Reception Start Time', fieldName: 'reception_time_start', placeholder: 'e.g., 08:00 PM' },
-    { label: 'Reception End Time', fieldName: 'reception_time_end', placeholder: 'e.g., 10:00 PM' },
+    { label: 'Ceremony Start Time', fieldName: 'ceremony_time_start', placeholder: 'e.g., 02:00 PM', required: false },
+    { label: 'Ceremony End Time', fieldName: 'ceremony_time_end', placeholder: 'e.g., 03:00 PM', required: false },
+    { label: 'Reception Start Time', fieldName: 'reception_time_start', placeholder: 'e.g., 08:00 PM', required: false },
+    { label: 'Reception End Time', fieldName: 'reception_time_end', placeholder: 'e.g., 10:00 PM', required: false },
     { label: 'Venue Name', fieldName: 'venue_name' },
     { label: 'Venue Address', fieldName: 'venue_address', isTextArea: true },
     { label: 'Venue Google Maps URL', fieldName: 'venue_google_maps_url', placeholder: 'https://maps.app.goo.gl/...', required: false },
@@ -206,6 +206,11 @@ const WeddingDetailsForm: React.FC<WeddingDetailsFormProps> = ({ initialDetails 
     { label: 'Invitation Message', fieldName: 'invitation_message_ms', isTextArea: true, labelEnMs: true, required: false },
     { label: 'Cordially Invite Text', fieldName: 'cordially_invite_text_en', isTextArea: true, labelEnMs: true, required: false },
     { label: 'Cordially Invite Text', fieldName: 'cordially_invite_text_ms', isTextArea: true, labelEnMs: true, required: false },
+    
+    // Gift/QR Code fields
+    { label: 'QR Code Image URL', fieldName: 'qr_code_url', placeholder: 'https://example.com/qr-code.png', required: false },
+    { label: 'QR Owner Name', fieldName: 'qr_owner_name', placeholder: 'e.g., Ahmad bin Ali', required: false },
+    { label: 'Bank Name', fieldName: 'qr_bank_name', placeholder: 'e.g., Maybank, CIMB Bank', required: false },
   ];
 
   return (

@@ -71,6 +71,9 @@ export async function getWeddingDetails() {
         invitation_message_ms: 'menjemput Yang Berbahagia ke majlis perkahwinan anakanda kami',
         cordially_invite_text_en: 'Cordially invite you to join us at the Wedding Reception of our beloved children',
         cordially_invite_text_ms: 'Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami',
+        qr_code_url: '',
+        qr_owner_name: '',
+        qr_bank_name: '',
       };
       return defaultDetails;
     }
