@@ -4,7 +4,7 @@ import { useActionState, useTransition, useEffect, useId } from 'react';
 import { useForm, Controller, SubmitHandler, Control, FieldErrors, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { WeddingDetailsSchema, WeddingDetailsFormState } from '@/lib/schemas/weddingDetailsSchema';
+import { WeddingDetailsSchema, WeddingDetailsFormState } from '@/lib/db/schema';
 import { updateWeddingDetails } from '@/lib/actions/weddingDetailsActions';
 import { useRouter } from 'next/navigation';
 

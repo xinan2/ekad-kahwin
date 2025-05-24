@@ -1,7 +1,10 @@
 import { getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
-import Database from 'better-sqlite3';
+import { db } from '@/lib/db/connect';
+import { adminUsers, weddingDetails as weddingDetailsTable, rsvpResponses as rsvpResponsesTable } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 
 // Session configuration  
 // Users MUST set SECRET_COOKIE_PASSWORD environment variable - no fallback provided for security
@@ -21,15 +24,7 @@ export interface SessionData {
   isLoggedIn: boolean;
 }
 
-// Database user interface
-interface AdminUser {
-  id: string;
-  username: string;
-  password_hash: string;
-  created_at: string;
-}
-
-// Wedding details interface
+// Wedding details interface for backward compatibility
 export interface WeddingDetails {
   id: number;
   groom_name: string;
@@ -93,8 +88,8 @@ export interface WeddingDetails {
   updated_at: string;
 }
 
-// RSVP response interface
-export interface RSVPResponse {
+// RSVP response interface for backward compatibility
+export interface RSVPResponseLegacy {
   id: string;
   name: string;
   phone: string;
@@ -102,339 +97,79 @@ export interface RSVPResponse {
   created_at: string;
 }
 
-// Initialize SQLite database for admin users
-const db = new Database("admin.db");
-
-// Create admin users table
-db.exec(`
-  CREATE TABLE IF NOT EXISTS admin_users (
-    id TEXT NOT NULL PRIMARY KEY,
-    username TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
-
-// Create wedding details table
-db.exec(`
-  CREATE TABLE IF NOT EXISTS wedding_details (
-    id INTEGER PRIMARY KEY,
-    groom_name TEXT NOT NULL,
-    bride_name TEXT NOT NULL,
-    wedding_date TEXT NOT NULL,
-    wedding_date_ms TEXT NOT NULL,
-    ceremony_time_start TEXT NOT NULL,
-    ceremony_time_end TEXT NOT NULL,
-    reception_time_start TEXT NOT NULL,
-    reception_time_end TEXT NOT NULL,
-    venue_name TEXT NOT NULL,
-    venue_address TEXT NOT NULL,
-    venue_google_maps_url TEXT,
-    contact1_name TEXT NOT NULL,
-    contact1_phone TEXT NOT NULL,
-    contact1_label_en TEXT NOT NULL,
-    contact1_label_ms TEXT NOT NULL,
-    contact2_name TEXT NOT NULL,
-    contact2_phone TEXT NOT NULL,
-    contact2_label_en TEXT NOT NULL,
-    contact2_label_ms TEXT NOT NULL,
-    contact3_name TEXT NOT NULL,
-    contact3_phone TEXT NOT NULL,
-    contact3_label_en TEXT NOT NULL,
-    contact3_label_ms TEXT NOT NULL,
-    contact4_name TEXT NOT NULL,
-    contact4_phone TEXT NOT NULL,
-    contact4_label_en TEXT NOT NULL,
-    contact4_label_ms TEXT NOT NULL,
-    rsvp_deadline TEXT NOT NULL,
-    rsvp_deadline_ms TEXT NOT NULL,
-    event_type_en TEXT NOT NULL,
-    event_type_ms TEXT NOT NULL,
-    dress_code_en TEXT NOT NULL,
-    dress_code_ms TEXT NOT NULL,
-    parking_info_en TEXT NOT NULL,
-    parking_info_ms TEXT NOT NULL,
-    food_info_en TEXT NOT NULL,
-    food_info_ms TEXT NOT NULL,
-    invitation_note_en TEXT NOT NULL,
-    invitation_note_ms TEXT NOT NULL,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
-
-// Create RSVP responses table
-db.exec(`
-  CREATE TABLE IF NOT EXISTS rsvp_responses (
-    id TEXT NOT NULL PRIMARY KEY,
-    name TEXT NOT NULL,
-    phone TEXT NOT NULL,
-    pax INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
-
-// Check if we need to migrate from old schema to new schema
-const tableInfo = db.prepare("PRAGMA table_info(wedding_details)").all() as Array<{name: string}>;
-const hasOldSchema = tableInfo.some(col => col.name === 'groom_contact_name' || col.name === 'bride_contact_name');
-
-if (hasOldSchema) {
-  console.log('Migrating wedding_details table to new schema...');
-  
-  // Get existing data
-  const existingData = db.prepare('SELECT * FROM wedding_details LIMIT 1').get() as Record<string, unknown> | undefined;
-  
-  // Drop and recreate table
-  db.exec('DROP TABLE wedding_details');
-  db.exec(`
-    CREATE TABLE wedding_details (
-      id INTEGER PRIMARY KEY,
-      groom_name TEXT NOT NULL,
-      bride_name TEXT NOT NULL,
-      wedding_date TEXT NOT NULL,
-      wedding_date_ms TEXT NOT NULL,
-      ceremony_time_start TEXT NOT NULL,
-      ceremony_time_end TEXT NOT NULL,
-      reception_time_start TEXT NOT NULL,
-      reception_time_end TEXT NOT NULL,
-      venue_name TEXT NOT NULL,
-      venue_address TEXT NOT NULL,
-      venue_google_maps_url TEXT,
-      contact1_name TEXT NOT NULL,
-      contact1_phone TEXT NOT NULL,
-      contact1_label_en TEXT NOT NULL,
-      contact1_label_ms TEXT NOT NULL,
-      contact2_name TEXT NOT NULL,
-      contact2_phone TEXT NOT NULL,
-      contact2_label_en TEXT NOT NULL,
-      contact2_label_ms TEXT NOT NULL,
-      contact3_name TEXT NOT NULL,
-      contact3_phone TEXT NOT NULL,
-      contact3_label_en TEXT NOT NULL,
-      contact3_label_ms TEXT NOT NULL,
-      contact4_name TEXT NOT NULL,
-      contact4_phone TEXT NOT NULL,
-      contact4_label_en TEXT NOT NULL,
-      contact4_label_ms TEXT NOT NULL,
-      rsvp_deadline TEXT NOT NULL,
-      rsvp_deadline_ms TEXT NOT NULL,
-      event_type_en TEXT NOT NULL,
-      event_type_ms TEXT NOT NULL,
-      dress_code_en TEXT NOT NULL,
-      dress_code_ms TEXT NOT NULL,
-      parking_info_en TEXT NOT NULL,
-      parking_info_ms TEXT NOT NULL,
-      food_info_en TEXT NOT NULL,
-      food_info_ms TEXT NOT NULL,
-      invitation_note_en TEXT NOT NULL,
-      invitation_note_ms TEXT NOT NULL,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-  
-  // Restore data with new schema if there was existing data
-  if (existingData) {
-    db.prepare(`
-      INSERT INTO wedding_details (
-        groom_name, bride_name, wedding_date, wedding_date_ms,
-        ceremony_time_start, ceremony_time_end, reception_time_start, reception_time_end,
-        venue_name, venue_address, venue_google_maps_url,
-        contact1_name, contact1_phone, contact1_label_en, contact1_label_ms,
-        contact2_name, contact2_phone, contact2_label_en, contact2_label_ms,
-        contact3_name, contact3_phone, contact3_label_en, contact3_label_ms,
-        contact4_name, contact4_phone, contact4_label_en, contact4_label_ms,
-        rsvp_deadline, rsvp_deadline_ms,
-        event_type_en, event_type_ms,
-        dress_code_en, dress_code_ms,
-        parking_info_en, parking_info_ms,
-        food_info_en, food_info_ms,
-        invitation_note_en, invitation_note_ms
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      existingData.groom_name || 'Hafiz',
-      existingData.bride_name || 'Afini',
-      existingData.wedding_date || 'Saturday, Dec 27th 2025',
-      existingData.wedding_date_ms || 'Sabtu, 27 Dis 2025',
-      existingData.ceremony_time_start || '10:00 AM',
-      existingData.ceremony_time_end || '12:00 PM',
-      existingData.reception_time_start || '1:00 PM',
-      existingData.reception_time_end || '4:00 PM',
-      existingData.venue_name || 'Dewan Banquet Hall',
-      existingData.venue_address || 'Jalan Mawar 1/2, Taman Mawar, 43000 Kajang, Selangor',
-      existingData.venue_google_maps_url || 'https://maps.google.com/?q=Dewan+Banquet+Hall+Kajang',
-      existingData.groom_contact_name || 'Hafiz', existingData.groom_contact_phone || '60 12-345 6789', 
-      "Groom's Family", 'Keluarga Pengantin Lelaki',
-      existingData.bride_contact_name || 'Afini', existingData.bride_contact_phone || '60 12-987 6543', 
-      "Bride's Family", 'Keluarga Pengantin Perempuan',
-      'Ahmad (Father)', '60 13-111 2222', "Groom's Father", 'Bapa Pengantin Lelaki',
-      'Siti (Mother)', '60 14-333 4444', "Bride's Mother", 'Ibu Pengantin Perempuan',
-      existingData.rsvp_deadline || 'December 20, 2025',
-      existingData.rsvp_deadline_ms || '20 Disember 2025',
-      existingData.event_type_en || 'WALIMATUL URUS',
-      existingData.event_type_ms || 'WALIMATUL URUS',
-      existingData.dress_code_en || 'Smart Casual',
-      existingData.dress_code_ms || 'Smart Casual',
-      existingData.parking_info_en || 'Parking available',
-      existingData.parking_info_ms || 'Tempat letak kereta tersedia',
-      existingData.food_info_en || 'Halal food provided',
-      existingData.food_info_ms || 'Hidangan halal disediakan',
-      existingData.invitation_note_en || 'Please bring this invitation',
-      existingData.invitation_note_ms || 'Sila bawa jemputan ini'
-    );
-  }
-  
-  console.log('Migration completed!');
-}
-
-// Check if we need to add invitation card fields
-if (!hasOldSchema) {
-  // Check and add individual fields that are missing
-  const columnNames = tableInfo.map(col => col.name);
-  
+// Initialize default wedding details if none exist
+async function initializeDefaultWeddingDetails() {
   try {
-    // Add each field if it doesn't exist
-    if (!columnNames.includes('groom_title_en')) {
-      console.log('Adding groom_title_en column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN groom_title_en TEXT DEFAULT ''`);
-    }
-    if (!columnNames.includes('groom_title_ms')) {
-      console.log('Adding groom_title_ms column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN groom_title_ms TEXT DEFAULT ''`);
-    }
-    if (!columnNames.includes('bride_title_en')) {
-      console.log('Adding bride_title_en column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN bride_title_en TEXT DEFAULT ''`);
-    }
-    if (!columnNames.includes('bride_title_ms')) {
-      console.log('Adding bride_title_ms column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN bride_title_ms TEXT DEFAULT ''`);
-    }
-    if (!columnNames.includes('groom_father_name')) {
-      console.log('Adding groom_father_name column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN groom_father_name TEXT DEFAULT ''`);
-    }
-    if (!columnNames.includes('groom_mother_name')) {
-      console.log('Adding groom_mother_name column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN groom_mother_name TEXT DEFAULT ''`);
-    }
-    if (!columnNames.includes('bride_father_name')) {
-      console.log('Adding bride_father_name column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN bride_father_name TEXT DEFAULT ''`);
-    }
-    if (!columnNames.includes('bride_mother_name')) {
-      console.log('Adding bride_mother_name column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN bride_mother_name TEXT DEFAULT ''`);
-    }
-    if (!columnNames.includes('bismillah_text_en')) {
-      console.log('Adding bismillah_text_en column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN bismillah_text_en TEXT DEFAULT 'In the name of Allah, the Most Gracious, the Most Merciful'`);
-    }
-    if (!columnNames.includes('bismillah_text_ms')) {
-      console.log('Adding bismillah_text_ms column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN bismillah_text_ms TEXT DEFAULT 'Dengan nama Allah Yang Maha Pemurah lagi Maha Penyayang'`);
-    }
-    if (!columnNames.includes('with_pleasure_text_en')) {
-      console.log('Adding with_pleasure_text_en column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN with_pleasure_text_en TEXT DEFAULT 'With great pleasure, we'`);
-    }
-    if (!columnNames.includes('with_pleasure_text_ms')) {
-      console.log('Adding with_pleasure_text_ms column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN with_pleasure_text_ms TEXT DEFAULT 'Dengan penuh kesyukuran, kami'`);
-    }
-    if (!columnNames.includes('together_with_text_en')) {
-      console.log('Adding together_with_text_en column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN together_with_text_en TEXT DEFAULT 'together with'`);
-    }
-    if (!columnNames.includes('together_with_text_ms')) {
-      console.log('Adding together_with_text_ms column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN together_with_text_ms TEXT DEFAULT 'bersama'`);
-    }
-    if (!columnNames.includes('invitation_message_en')) {
-      console.log('Adding invitation_message_en column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN invitation_message_en TEXT DEFAULT 'cordially invite you to join us at the Wedding Reception of our beloved children'`);
-    }
-    if (!columnNames.includes('invitation_message_ms')) {
-      console.log('Adding invitation_message_ms column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN invitation_message_ms TEXT DEFAULT 'menjemput Yang Berbahagia Tan Sri / Puan Sri / Dato'' Seri / Datin Seri / Dato'' / Datin / Tuan / Puan / Encik / Cik ke majlis perkahwinan anakanda kami'`);
-    }
-    if (!columnNames.includes('cordially_invite_text_en')) {
-      console.log('Adding cordially_invite_text_en column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN cordially_invite_text_en TEXT DEFAULT 'Cordially invite you to join in at the Wedding Reception of our beloved children'`);
-    }
-    if (!columnNames.includes('cordially_invite_text_ms')) {
-      console.log('Adding cordially_invite_text_ms column...');
-      db.exec(`ALTER TABLE wedding_details ADD COLUMN cordially_invite_text_ms TEXT DEFAULT 'Cordially invite you to join in at the Wedding Reception of our beloved children'`);
-    }
+    const existing = await db.select().from(weddingDetailsTable).limit(1);
     
-    // Update existing records with better default values if columns were added
-    const hasExistingData = db.prepare('SELECT COUNT(*) as count FROM wedding_details').get() as { count: number };
-    if (hasExistingData.count > 0) {
-      console.log('Updating existing records with default invitation card values...');
-      db.exec(`UPDATE wedding_details SET 
-        groom_title_en = COALESCE(NULLIF(groom_title_en, ''), 'Ayah Pengantin Lelaki'),
-        groom_title_ms = COALESCE(NULLIF(groom_title_ms, ''), 'Ayah Pengantin Lelaki'),
-        bride_title_en = COALESCE(NULLIF(bride_title_en, ''), 'Ibu Pengantin Perempuan'),
-        bride_title_ms = COALESCE(NULLIF(bride_title_ms, ''), 'Ibu Pengantin Perempuan'),
-        groom_father_name = COALESCE(NULLIF(groom_father_name, ''), 'MOHAMAD SAID BIN RASSAL'),
-        groom_mother_name = COALESCE(NULLIF(groom_mother_name, ''), 'SAFURAH BINTI HJ KAMARUL'),
-        bride_father_name = COALESCE(NULLIF(bride_father_name, ''), 'KHARUL ANUAR BIN JAMALUDDIN'),
-        bride_mother_name = COALESCE(NULLIF(bride_mother_name, ''), 'AISHAH AIRIS BINTI ZAKARIA')
-      `);
+    if (existing.length === 0) {
+      await db.insert(weddingDetailsTable).values({
+        groom_name: 'MUHAMMAD AZFAR BIN MOHAMAD SAID',
+        bride_name: 'NURAFINI BINTI KHARUL ANUAR',
+        wedding_date: 'December 20, 2025',
+        wedding_date_ms: '20 Disember 2025',
+        ceremony_time_start: '2:00 PM',
+        ceremony_time_end: '3:00 PM',
+        reception_time_start: '8:00 PM',
+        reception_time_end: '10:00 PM',
+        venue_name: 'Dewan Seri Budiman',
+        venue_address: '123 Wedding Street, Kuala Lumpur',
+        venue_google_maps_url: '',
+        contact1_name: 'MOHAMAD SAID BIN RASSAL',
+        contact1_phone: '012-3456789',
+        contact1_label_en: 'Father of Groom',
+        contact1_label_ms: 'Ayah Pengantin Lelaki',
+        contact2_name: 'KHARUL ANUAR BIN JAMALUDDIN',
+        contact2_phone: '012-9876543',
+        contact2_label_en: 'Father of Bride',
+        contact2_label_ms: 'Ayah Pengantin Perempuan',
+        contact3_name: '',
+        contact3_phone: '',
+        contact3_label_en: '',
+        contact3_label_ms: '',
+        contact4_name: '',
+        contact4_phone: '',
+        contact4_label_en: '',
+        contact4_label_ms: '',
+        rsvp_deadline: 'December 15, 2025',
+        rsvp_deadline_ms: '15 Disember 2025',
+        event_type_en: 'WALIMATUL URUS',
+        event_type_ms: 'WALIMATUL URUS',
+        dress_code_en: 'Smart Casual',
+        dress_code_ms: 'Smart Casual',
+        parking_info_en: 'Parking available',
+        parking_info_ms: 'Tempat letak kereta tersedia',
+        food_info_en: 'Halal food provided',
+        food_info_ms: 'Hidangan halal disediakan',
+        invitation_note_en: 'Please bring this invitation',
+        invitation_note_ms: 'Sila bawa jemputan ini',
+        groom_title_en: '',
+        groom_title_ms: '',
+        bride_title_en: '',
+        bride_title_ms: '',
+        groom_father_name: 'MOHAMAD SAID BIN RASSAL',
+        groom_mother_name: 'SAFURAH BINTI HJ KAMARUL',
+        bride_father_name: 'KHARUL ANUAR BIN JAMALUDDIN',
+        bride_mother_name: 'AISHAH AIRIS BINTI ZAKARIA',
+        bismillah_text_en: 'In the name of Allah, the Most Gracious, the Most Merciful',
+        bismillah_text_ms: 'Dengan nama Allah Yang Maha Pemurah lagi Maha Penyayang',
+        with_pleasure_text_en: 'With great pleasure, we',
+        with_pleasure_text_ms: 'Dengan penuh kesyukuran, kami',
+        together_with_text_en: 'together with',
+        together_with_text_ms: 'bersama',
+        invitation_message_en: 'cordially invite you to join us at the Wedding Reception of our beloved children',
+        invitation_message_ms: 'menjemput Yang Berbahagia ke majlis perkahwinan anakanda kami',
+        cordially_invite_text_en: 'Cordially invite you to join us at the Wedding Reception of our beloved children',
+        cordially_invite_text_ms: 'Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami',
+      });
     }
-    
-    console.log('Invitation card fields migration completed successfully!');
   } catch (error) {
-    console.error('Error adding invitation card fields:', error);
+    console.error('Error initializing default wedding details:', error);
   }
 }
 
-// Insert default wedding details if none exist
-const existingDetails = db.prepare('SELECT COUNT(*) as count FROM wedding_details').get() as { count: number };
-if (existingDetails.count === 0) {
-  db.prepare(`
-    INSERT INTO wedding_details (
-      groom_name, bride_name, wedding_date, wedding_date_ms,
-      ceremony_time_start, ceremony_time_end, reception_time_start, reception_time_end,
-      venue_name, venue_address, venue_google_maps_url,
-      contact1_name, contact1_phone, contact1_label_en, contact1_label_ms,
-      contact2_name, contact2_phone, contact2_label_en, contact2_label_ms,
-      contact3_name, contact3_phone, contact3_label_en, contact3_label_ms,
-      contact4_name, contact4_phone, contact4_label_en, contact4_label_ms,
-      rsvp_deadline, rsvp_deadline_ms,
-      event_type_en, event_type_ms,
-      dress_code_en, dress_code_ms,
-      parking_info_en, parking_info_ms,
-      food_info_en, food_info_ms,
-      invitation_note_en, invitation_note_ms,
-      groom_title_en, groom_title_ms, bride_title_en, bride_title_ms,
-      groom_father_name, groom_mother_name, bride_father_name, bride_mother_name,
-      bismillah_text_en, bismillah_text_ms, with_pleasure_text_en, with_pleasure_text_ms,
-      together_with_text_en, together_with_text_ms, invitation_message_en, invitation_message_ms,
-      cordially_invite_text_en, cordially_invite_text_ms
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-    'Hafiz', 'Afini', 'Saturday, Dec 27th 2025', 'Sabtu, 27 Dis 2025',
-    '10:00 AM', '12:00 PM', '1:00 PM', '4:00 PM',
-    'Dewan Banquet Hall', 'Jalan Mawar 1/2, Taman Mawar, 43000 Kajang, Selangor',
-    'https://maps.google.com/?q=Dewan+Banquet+Hall+Kajang',
-    'Hafiz', '60 12-345 6789', "Groom's Family", 'Keluarga Pengantin Lelaki',
-    'Afini', '60 12-987 6543', "Bride's Family", 'Keluarga Pengantin Perempuan',
-    'Ahmad (Father)', '60 13-111 2222', "Groom's Father", 'Bapa Pengantin Lelaki',
-    'Siti (Mother)', '60 14-333 4444', "Bride's Mother", 'Ibu Pengantin Perempuan',
-    'December 20, 2025', '20 Disember 2025',
-    'WALIMATUL URUS', 'WALIMATUL URUS',
-    'Smart Casual', 'Smart Casual',
-    'Parking available', 'Tempat letak kereta tersedia',
-    'Halal food provided', 'Hidangan halal disediakan',
-    'Please bring this invitation', 'Sila bawa jemputan ini',
-    'Ayah Pengantin Lelaki', 'Ayah Pengantin Lelaki', 'Ibu Pengantin Lelaki', 'Ibu Pengantin Lelaki',
-    'MOHAMAD SAID BIN RASSAL', 'SAFURAH BINTI HJ KAMARUL', 'KHARUL ANUAR BIN JAMALUDDIN', 'AISHAH AIRIS BINTI ZAKARIA',
-    'In the name of Allah, the Most Gracious, the Most Merciful', 'Dengan nama Allah Yang Maha Pemurah lagi Maha Penyayang',
-    'With great pleasure, we', 'Dengan penuh kesyukuran, kami',
-    'together with', 'bersama',
-    'cordially invite you to join us at the Wedding Reception of our beloved children', 'menjemput Yang Berbahagia Tan Sri / Puan Sri / Dato\' Seri / Datin Seri / Dato\' / Datin / Tuan / Puan / Encik / Cik ke majlis perkahwinan anakanda kami',
-    'Cordially invite you to join in at the Wedding Reception of our beloved children', 'Cordially invite you to join in at the Wedding Reception of our beloved children'
-  );
-}
+// Initialize on module load
+initializeDefaultWeddingDetails();
 
 // Get session
 export async function getSession() {
@@ -454,47 +189,53 @@ export const adminAuth = {
   // Create admin user (use this once to create your admin account)
   async createAdmin(username: string, password: string) {
     const hashedPassword = await bcrypt.hash(password, 12);
-    const id = crypto.randomUUID();
     
     try {
-      const stmt = db.prepare(`
-        INSERT INTO admin_users (id, username, password_hash) 
-        VALUES (?, ?, ?)
-      `);
-      stmt.run(id, username, hashedPassword);
-      return { success: true, id };
-    } catch {
+      const result = await db.insert(adminUsers).values({
+        username,
+        password: hashedPassword,
+      }).returning({ id: adminUsers.id });
+      
+      return { success: true, id: result[0].id.toString() };
+    } catch (error) {
+      console.error('Error creating admin:', error);
       return { success: false, error: 'Username already exists' };
     }
   },
 
   // Login admin
   async login(username: string, password: string) {
-    const stmt = db.prepare(`
-      SELECT id, username, password_hash 
-      FROM admin_users 
-      WHERE username = ?
-    `);
-    const user = stmt.get(username) as AdminUser | undefined;
-    
-    if (!user) {
-      return { success: false, error: 'Invalid credentials' };
+    try {
+      const result = await db
+        .select()
+        .from(adminUsers)
+        .where(eq(adminUsers.username, username))
+        .limit(1);
+      
+      const user = result[0];
+      
+      if (!user) {
+        return { success: false, error: 'Invalid credentials' };
+      }
+      
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      
+      if (!isValidPassword) {
+        return { success: false, error: 'Invalid credentials' };
+      }
+      
+      // Create session
+      const session = await getSession();
+      session.userId = user.id.toString();
+      session.username = user.username;
+      session.isLoggedIn = true;
+      await session.save();
+      
+      return { success: true, user: { id: user.id.toString(), username: user.username } };
+    } catch (error) {
+      console.error('Error during login:', error);
+      return { success: false, error: 'Login failed' };
     }
-    
-    const isValidPassword = await bcrypt.compare(password, user.password_hash);
-    
-    if (!isValidPassword) {
-      return { success: false, error: 'Invalid credentials' };
-    }
-    
-    // Create session
-    const session = await getSession();
-    session.userId = user.id;
-    session.username = user.username;
-    session.isLoggedIn = true;
-    await session.save();
-    
-    return { success: true, user: { id: user.id, username: user.username } };
   },
 
   // Logout admin
@@ -533,9 +274,75 @@ export const weddingDetails = {
   // Get wedding details
   async getDetails(): Promise<WeddingDetails | null> {
     try {
-      const stmt = db.prepare('SELECT * FROM wedding_details LIMIT 1');
-      const details = stmt.get() as WeddingDetails | undefined;
-      return details || null;
+      const result = await db.select().from(weddingDetailsTable).limit(1);
+      const details = result[0];
+      
+      if (!details) {
+        return null;
+      }
+      
+      // Convert Drizzle result to legacy interface format
+      return {
+        id: details.id,
+        groom_name: details.groom_name,
+        bride_name: details.bride_name,
+        wedding_date: details.wedding_date,
+        wedding_date_ms: details.wedding_date_ms,
+        ceremony_time_start: details.ceremony_time_start,
+        ceremony_time_end: details.ceremony_time_end,
+        reception_time_start: details.reception_time_start,
+        reception_time_end: details.reception_time_end,
+        venue_name: details.venue_name,
+        venue_address: details.venue_address,
+        venue_google_maps_url: details.venue_google_maps_url || '',
+        contact1_name: details.contact1_name,
+        contact1_phone: details.contact1_phone,
+        contact1_label_en: details.contact1_label_en,
+        contact1_label_ms: details.contact1_label_ms,
+        contact2_name: details.contact2_name,
+        contact2_phone: details.contact2_phone,
+        contact2_label_en: details.contact2_label_en,
+        contact2_label_ms: details.contact2_label_ms,
+        contact3_name: details.contact3_name || '',
+        contact3_phone: details.contact3_phone || '',
+        contact3_label_en: details.contact3_label_en || '',
+        contact3_label_ms: details.contact3_label_ms || '',
+        contact4_name: details.contact4_name || '',
+        contact4_phone: details.contact4_phone || '',
+        contact4_label_en: details.contact4_label_en || '',
+        contact4_label_ms: details.contact4_label_ms || '',
+        rsvp_deadline: details.rsvp_deadline,
+        rsvp_deadline_ms: details.rsvp_deadline_ms,
+        event_type_en: details.event_type_en,
+        event_type_ms: details.event_type_ms,
+        dress_code_en: details.dress_code_en,
+        dress_code_ms: details.dress_code_ms,
+        parking_info_en: details.parking_info_en,
+        parking_info_ms: details.parking_info_ms,
+        food_info_en: details.food_info_en,
+        food_info_ms: details.food_info_ms,
+        invitation_note_en: details.invitation_note_en,
+        invitation_note_ms: details.invitation_note_ms,
+        groom_title_en: details.groom_title_en || '',
+        groom_title_ms: details.groom_title_ms || '',
+        bride_title_en: details.bride_title_en || '',
+        bride_title_ms: details.bride_title_ms || '',
+        groom_father_name: details.groom_father_name || '',
+        groom_mother_name: details.groom_mother_name || '',
+        bride_father_name: details.bride_father_name || '',
+        bride_mother_name: details.bride_mother_name || '',
+        bismillah_text_en: details.bismillah_text_en || 'In the name of Allah, the Most Gracious, the Most Merciful',
+        bismillah_text_ms: details.bismillah_text_ms || 'Dengan nama Allah Yang Maha Pemurah lagi Maha Penyayang',
+        with_pleasure_text_en: details.with_pleasure_text_en || 'With great pleasure, we',
+        with_pleasure_text_ms: details.with_pleasure_text_ms || 'Dengan penuh kesyukuran, kami',
+        together_with_text_en: details.together_with_text_en || 'together with',
+        together_with_text_ms: details.together_with_text_ms || 'bersama',
+        invitation_message_en: details.invitation_message_en || 'cordially invite you to join us at the Wedding Reception of our beloved children',
+        invitation_message_ms: details.invitation_message_ms || 'menjemput Yang Berbahagia ke majlis perkahwinan anakanda kami',
+        cordially_invite_text_en: details.cordially_invite_text_en || 'Cordially invite you to join us at the Wedding Reception of our beloved children',
+        cordially_invite_text_ms: details.cordially_invite_text_ms || 'Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami',
+        updated_at: details.updated_at.toISOString(),
+      };
     } catch (error) {
       console.error('Error getting wedding details:', error);
       return null;
@@ -545,20 +352,22 @@ export const weddingDetails = {
   // Update wedding details
   async updateDetails(details: Partial<WeddingDetails>): Promise<{ success: boolean; error?: string }> {
     try {
-      const updateFields = Object.keys(details).filter(key => key !== 'id').map(key => `${key} = ?`).join(', ');
-      const updateValues = Object.keys(details).filter(key => key !== 'id').map(key => details[key as keyof WeddingDetails]);
+      // Remove id and updated_at from the update object
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, updated_at, ...updateData } = details;
       
-      if (updateFields.length === 0) {
+      if (Object.keys(updateData).length === 0) {
         return { success: false, error: 'No fields to update' };
       }
 
-      const stmt = db.prepare(`
-        UPDATE wedding_details 
-        SET ${updateFields}, updated_at = CURRENT_TIMESTAMP 
-        WHERE id = 1
-      `);
+      await db
+        .update(weddingDetailsTable)
+        .set({
+          ...updateData,
+          updated_at: new Date(),
+        })
+        .where(eq(weddingDetailsTable.id, 1));
       
-      stmt.run(...updateValues);
       return { success: true };
     } catch (error) {
       console.error('Error updating wedding details:', error);
@@ -573,20 +382,26 @@ export const rsvpResponses = {
   async createResponse(name: string, phone: string, pax: number): Promise<{ success: boolean; error?: string; id?: string }> {
     try {
       // Check for duplicate phone number
-      const existingStmt = db.prepare('SELECT id FROM rsvp_responses WHERE phone = ?');
-      const existing = existingStmt.get(phone) as RSVPResponse | undefined;
+      const existing = await db
+        .select()
+        .from(rsvpResponsesTable)
+        .where(eq(rsvpResponsesTable.phone, phone))
+        .limit(1);
       
-      if (existing) {
+      if (existing.length > 0) {
         return { success: false, error: 'This phone number has already been used to RSVP' };
       }
 
-      const id = crypto.randomUUID();
-      const stmt = db.prepare(`
-        INSERT INTO rsvp_responses (id, name, phone, pax) 
-        VALUES (?, ?, ?, ?)
-      `);
-      stmt.run(id, name, phone, pax);
-      return { success: true, id };
+      const result = await db
+        .insert(rsvpResponsesTable)
+        .values({
+          name,
+          phone,
+          pax,
+        })
+        .returning({ id: rsvpResponsesTable.id });
+      
+      return { success: true, id: result[0].id.toString() };
     } catch (error) {
       console.error('Error creating RSVP response:', error);
       return { success: false, error: 'Failed to submit RSVP' };
@@ -594,11 +409,20 @@ export const rsvpResponses = {
   },
 
   // Get all RSVP responses
-  async getAllResponses(): Promise<RSVPResponse[]> {
+  async getAllResponses(): Promise<RSVPResponseLegacy[]> {
     try {
-      const stmt = db.prepare('SELECT * FROM rsvp_responses ORDER BY created_at DESC');
-      const responses = stmt.all() as RSVPResponse[];
-      return responses;
+      const responses = await db
+        .select()
+        .from(rsvpResponsesTable)
+        .orderBy(sql`${rsvpResponsesTable.submitted_at} DESC`);
+      
+      return responses.map(response => ({
+        id: response.id.toString(),
+        name: response.name,
+        phone: response.phone,
+        pax: response.pax,
+        created_at: response.submitted_at.toISOString(),
+      }));
     } catch (error) {
       console.error('Error getting RSVP responses:', error);
       return [];
@@ -608,11 +432,16 @@ export const rsvpResponses = {
   // Get total RSVP count and pax
   async getStats(): Promise<{ totalResponses: number; totalPax: number }> {
     try {
-      const stmt = db.prepare('SELECT COUNT(*) as total_responses, COALESCE(SUM(pax), 0) as total_pax FROM rsvp_responses');
-      const stats = stmt.get() as { total_responses: number; total_pax: number };
-      return { 
-        totalResponses: stats.total_responses, 
-        totalPax: stats.total_pax 
+      const result = await db
+        .select({
+          totalResponses: sql<number>`count(*)::int`,
+          totalPax: sql<number>`coalesce(sum(${rsvpResponsesTable.pax}), 0)::int`,
+        })
+        .from(rsvpResponsesTable);
+      
+      return {
+        totalResponses: result[0]?.totalResponses || 0,
+        totalPax: result[0]?.totalPax || 0,
       };
     } catch (error) {
       console.error('Error getting RSVP stats:', error);

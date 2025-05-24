@@ -1,15 +1,18 @@
 import AdminSetupForm from '@/components/AdminSetupForm';
 import { redirect } from 'next/navigation';
-import Database from 'better-sqlite3';
+import { db } from '@/lib/db/connect';
+import { adminUsers } from '@/lib/db/schema';
+import { count } from 'drizzle-orm';
 
 export default async function AdminSetupPage() {
   // Check if admin users already exist
   try {
-    const db = new Database("admin.db");
-    const existingAdmin = db.prepare('SELECT COUNT(*) as count FROM admin_users').get() as { count: number };
+    const existingAdminCount = await db
+      .select({ count: count() })
+      .from(adminUsers);
     
     // If admin already exists, redirect to login
-    if (existingAdmin.count > 0) {
+    if (existingAdminCount[0]?.count > 0) {
       redirect('/admin/login');
     }
   } catch (error) {

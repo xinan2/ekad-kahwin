@@ -1,8 +1,10 @@
 'use server';
 
 import { adminAuth } from '@/lib/auth';
-import Database from 'better-sqlite3';
-import { SetupSchema, SetupFormState } from '@/lib/schemas/adminSetupSchema';
+import { db } from '@/lib/db/connect';
+import { adminUsers } from '@/lib/db/schema';
+import { count } from 'drizzle-orm';
+import { SetupSchema, SetupFormState } from '@/lib/db/schema';
 
 export async function setupAdmin(
   prevState: SetupFormState, 
@@ -26,11 +28,12 @@ export async function setupAdmin(
 
     const { username, password } = validatedFields.data;
 
-    // 2. Check for existing admin users
-    const db = new Database("admin.db");
-    const existingAdmin = db.prepare('SELECT COUNT(*) as count FROM admin_users').get() as { count: number };
+    // 2. Check for existing admin users using Drizzle
+    const existingAdminCount = await db
+      .select({ count: count() })
+      .from(adminUsers);
     
-    if (existingAdmin.count > 0) {
+    if (existingAdminCount[0]?.count > 0) {
       return {
         message: 'Admin user already exists. Setup can only be run once.',
         errors: { general: ['Admin user already exists. Setup can only be run once.'] },

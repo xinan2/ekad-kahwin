@@ -60,11 +60,7 @@ Server actions handle the form submission logic on the server.
 
 **Example: `lib/actions/adminLoginActions.ts`**
 
-```typescript
-'use server';
-
-import { adminAuth } from '@/lib/auth'; // Your business logic (e.g., DB interaction)
-import { LoginSchema, LoginFormState } from '@/lib/schemas/adminLoginSchema';
+```typescript'use server';import { adminAuth } from '@/lib/auth'; // Your business logic (e.g., DB interaction)import { LoginSchema, LoginFormState } from '@/lib/db/schema';
 
 export async function loginUser(
   prevState: LoginFormState, 
@@ -139,7 +135,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod'; // For type inference if needed
 
-import { LoginSchema, LoginFormState } from '@/lib/schemas/adminLoginSchema';
+import { LoginSchema, LoginFormState } from '@/lib/db/schema';
 import { loginUser } from '@/lib/actions/adminLoginActions';
 
 // Infer form values type from Zod schema

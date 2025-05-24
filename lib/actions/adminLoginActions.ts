@@ -2,7 +2,7 @@
 
 import { adminAuth } from '@/lib/auth';
 // Definitions are now in lib/schemas/adminLoginSchema.ts
-import { LoginSchema, LoginFormState } from '@/lib/schemas/adminLoginSchema';
+import { LoginSchema, LoginFormState } from '@/lib/db/schema';
 
 export async function loginUser(prevState: LoginFormState, formData: FormData): Promise<LoginFormState> {
   try {

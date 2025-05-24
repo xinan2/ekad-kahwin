@@ -1,7 +1,7 @@
 'use server';
 
 import { weddingDetails } from '@/lib/auth'; // Assuming weddingDetails object in auth.ts handles DB interaction
-import { WeddingDetailsSchema, WeddingDetailsFormState } from '@/lib/schemas/weddingDetailsSchema';
+import { WeddingDetailsSchema, WeddingDetailsFormState } from '@/lib/db/schema';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 

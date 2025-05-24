@@ -1,7 +1,7 @@
 'use server';
 
 import { rsvpResponses } from '@/lib/auth';
-import { RSVPSchema, RSVPFormState } from '@/lib/schemas/rsvpSchema';
+import { RSVPSchema, RSVPFormState } from '@/lib/db/schema';
 
 // Phone number normalization for Malaysian numbers
 function normalizePhoneNumber(phone: string): string {

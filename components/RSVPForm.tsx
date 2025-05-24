@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 
-import { RSVPSchema, RSVPFormState } from '@/lib/schemas/rsvpSchema';
+import { RSVPSchema, RSVPFormState } from '@/lib/db/schema';
 import { submitRSVP } from '@/lib/actions/rsvpActions';
 
 // Infer form values type from Zod schema

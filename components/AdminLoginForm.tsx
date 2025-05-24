@@ -3,7 +3,7 @@
 import { useEffect, useActionState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginSchema, LoginFormState } from '@/lib/schemas/adminLoginSchema';
+import { LoginSchema, LoginFormState } from '@/lib/db/schema';
 import { loginUser } from '@/lib/actions/adminLoginActions';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';

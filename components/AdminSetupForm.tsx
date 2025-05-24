@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import Link from 'next/link';
 
-import { SetupSchema, SetupFormState } from '@/lib/schemas/adminSetupSchema';
+import { SetupSchema, SetupFormState } from '@/lib/db/schema';
 import { setupAdmin } from '@/lib/actions/adminSetupActions';
 
 // Infer form values type from Zod schema
