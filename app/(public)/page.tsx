@@ -1009,9 +1009,17 @@ export default function HomePage() {
     setLanguage(newLanguage);
   };
 
-  const toggleInvitation = () => {
-    setShowInvitation(!showInvitation);
-  };
+  // Add escape key handler to prevent getting stuck
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showInvitation) {
+        setShowInvitation(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showInvitation]);
 
   const getModalContent = () => {
     switch (activeModal) {
@@ -1057,17 +1065,13 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen relative font-sans">
-      {/* 3D Flip Container */}
-      <div className="relative w-full h-screen overflow-hidden" style={{ perspective: '1000px' }}>
+      {/* Flip Container - iOS Compatible */}
+      <div className="relative w-full h-screen overflow-hidden">
         {/* Front Side - Main Wedding Page */}
         <div 
-          className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-in-out transform-style-preserve-3d ${
-            showInvitation ? 'rotate-y-180' : 'rotate-y-0'
+          className={`absolute inset-0 w-full h-full transition-all duration-700 ease-in-out ${
+            showInvitation ? 'opacity-0 pointer-events-none transform scale-95' : 'opacity-100 pointer-events-auto transform scale-100'
           }`}
-          style={{ 
-            transformStyle: 'preserve-3d',
-            backfaceVisibility: 'hidden'
-          }}
         >
           {/* Main Wedding Content */}
           <div className="w-full h-full bg-green-900 relative">
@@ -1158,8 +1162,9 @@ export default function HomePage() {
                 {/* Floating Invitation Button */}
                 <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 z-30 md:bottom-40">
                   <button
-                    onClick={toggleInvitation}
+                    onClick={() => setShowInvitation(true)}
                     className="bg-white/95 backdrop-blur-sm text-green-800 px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center space-x-2 border border-green-200/50"
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
                   >
                     <InvitationIcon />
                     <span className="font-medium">{t.viewInvitation}</span>
@@ -1256,21 +1261,16 @@ export default function HomePage() {
 
         {/* Back Side - Invitation Card */}
         <div 
-          className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-in-out ${
-            showInvitation ? 'rotate-y-0' : 'rotate-y-180'
+          className={`absolute inset-0 w-full h-full transition-all duration-700 ease-in-out ${
+            showInvitation ? 'opacity-100 pointer-events-auto transform scale-100' : 'opacity-0 pointer-events-none transform scale-95'
           }`}
-          style={{ 
-            transformStyle: 'preserve-3d',
-            backfaceVisibility: 'hidden',
-            transform: showInvitation ? 'rotateY(0deg)' : 'rotateY(-180deg)'
-          }}
         >
           {/* Invitation Card Content */}
           <div className="w-full h-full bg-white relative overflow-y-auto">
             {/* Back Button */}
             <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-4">
               <button
-                onClick={toggleInvitation}
+                onClick={() => setShowInvitation(false)}
                 className="flex items-center space-x-2 text-green-700 hover:text-green-800 transition-colors"
               >
                 <BackIcon />
@@ -1297,18 +1297,7 @@ export default function HomePage() {
         {getModalContent()}
       </BottomSheet>
 
-      {/* Custom CSS for 3D flip animation */}
-      <style jsx>{`
-        .transform-style-preserve-3d {
-          transform-style: preserve-3d;
-        }
-        .rotate-y-0 {
-          transform: rotateY(0deg);
-        }
-        .rotate-y-180 {
-          transform: rotateY(180deg);
-        }
-      `}</style>
+
     </div>
   );
 }
