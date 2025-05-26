@@ -273,24 +273,14 @@ const InvitationCard = ({ weddingData, language, t }: { weddingData: WeddingDeta
       {/* Bismillah */}
       <div className="space-y-2">
         <div className="flex justify-center">
-          <svg 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            className="text-green-800"
-          >
-            <path 
-              d="M12 2C8.5 2 5.7 4.8 5.7 8.3c0 2.8 1.8 5.2 4.3 6.1-.3-.8-.5-1.7-.5-2.6 0-3.9 3.2-7.1 7.1-7.1.9 0 1.8.2 2.6.5C18.3 3.8 15.5 2 12 2z" 
-              fill="currentColor"
-            />
-            <circle 
-              cx="17" 
-              cy="7" 
-              r="1.5" 
-              fill="currentColor"
-            />
-          </svg>
+          <Image
+            src={'/assets/images/bismillah.png'}
+            alt="bismillah"
+            width={200}
+            height={200}
+            priority
+            className="w-1/2 h-auto"
+          />
         </div>
         <p className="text-sm italic text-green-700">{bismillahText}</p>
         <div className="w-24 h-px bg-green-600 mx-auto" />
@@ -1138,24 +1128,14 @@ export default function HomePage() {
                     {/* Islamic Ornament */}
                     <div className="mb-4 pt-20 md:pt-40">
                       <div className="flex justify-center mb-4">
-                        <svg 
-                          width="32" 
-                          height="32" 
-                          viewBox="0 0 24 24" 
-                          fill="none" 
-                          className="text-black"
-                        >
-                          <path 
-                            d="M12 2C8.5 2 5.7 4.8 5.7 8.3c0 2.8 1.8 5.2 4.3 6.1-.3-.8-.5-1.7-.5-2.6 0-3.9 3.2-7.1 7.1-7.1.9 0 1.8.2 2.6.5C18.3 3.8 15.5 2 12 2z" 
-                            fill="currentColor"
-                          />
-                          <circle 
-                            cx="17" 
-                            cy="7" 
-                            r="1.5" 
-                            fill="currentColor"
-                          />
-                        </svg>
+                        <Image
+                          src={'/assets/images/bismillah.png'}
+                          alt="bismillah"
+                          width={200}
+                          height={200}
+                          priority
+                          className="w-1/2 h-auto"
+                        />
                       </div>
                       <div className="w-24 h-px bg-black/60 mx-auto mb-2" />
                       <div className="text-sm tracking-widest opacity-80 text-black">
