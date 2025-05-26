@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useActionState, useTransition } from 'react';
+import { useEffect, useActionState, useTransition, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -8,7 +8,7 @@ import { z } from 'zod';
 import Link from 'next/link';
 
 import { SetupSchema, SetupFormState } from '@/lib/db/schema';
-import { setupAdmin } from '@/lib/actions/adminSetupActions';
+import { setupAdmin, checkAdminExists } from '@/lib/actions/adminSetupActions';
 
 // Infer form values type from Zod schema
 type SetupFormValues = z.infer<typeof SetupSchema>;
@@ -49,6 +49,10 @@ export default function AdminSetupForm() {
   
   // 3. Next.js router for client-side navigation
   const router = useRouter();
+  
+  // 4. Admin existence check state
+  const [adminExists, setAdminExists] = useState<boolean | null>(null);
+  const [isCheckingAdmin, setIsCheckingAdmin] = useState(true);
 
   // 4. React Hook Form setup
   const {
@@ -64,7 +68,25 @@ export default function AdminSetupForm() {
     },
   });
 
-  // 5. Effect for client-side redirection on success
+  // 5. Effect to check if admin already exists
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const exists = await checkAdminExists();
+        setAdminExists(exists);
+      } catch (error) {
+        console.error('Error checking admin existence:', error);
+        // In case of error, assume admin exists for security
+        setAdminExists(true);
+      } finally {
+        setIsCheckingAdmin(false);
+      }
+    };
+
+    checkAdmin();
+  }, []);
+
+  // 6. Effect for client-side redirection on success
   useEffect(() => {
     if (state.success) {
       // Show success message briefly, then redirect
@@ -85,6 +107,51 @@ export default function AdminSetupForm() {
       formAction(formData);
     });
   };
+
+  // Loading state while checking admin existence
+  if (isCheckingAdmin) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center p-4 font-sans">
+        <div className="max-w-md w-full text-center">
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-green-100">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+            <p className="text-green-600">Checking system status...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Admin already exists - show security message
+  if (adminExists) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center p-4 font-sans">
+        <div className="max-w-md w-full text-center">
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-red-100">
+            <div className="text-6xl mb-4">🔒</div>
+            <h1 className="text-2xl font-bold text-red-800 mb-2">Setup Not Available</h1>
+            <p className="text-red-600 mb-6">
+              Admin account already exists. This setup page is only available for initial configuration.
+            </p>
+            <div className="space-y-3">
+              <Link 
+                href="/admin/login"
+                className="block w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+              >
+                Go to Admin Login
+              </Link>
+              <Link 
+                href="/"
+                className="block text-red-600 hover:text-red-700 text-sm transition-colors"
+              >
+                ← Back to Wedding Invitation
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Success state UI
   if (state.success) {

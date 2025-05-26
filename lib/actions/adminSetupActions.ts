@@ -6,6 +6,21 @@ import { adminUsers } from '@/lib/db/schema';
 import { count } from 'drizzle-orm';
 import { SetupSchema, SetupFormState } from '@/lib/db/schema';
 
+// Function to check if any admin users exist
+export async function checkAdminExists(): Promise<boolean> {
+  try {
+    const existingAdminCount = await db
+      .select({ count: count() })
+      .from(adminUsers);
+    
+    return existingAdminCount[0]?.count > 0;
+  } catch (error) {
+    console.error('Error checking admin existence:', error);
+    // In case of error, assume admin exists for security
+    return true;
+  }
+}
+
 export async function setupAdmin(
   prevState: SetupFormState, 
   formData: FormData
