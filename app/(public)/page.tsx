@@ -79,10 +79,6 @@ const translations = {
     
     // Invitation Card
     with: 'with',
-    brideFatherTitle: 'Father of the Bride',
-    brideMotherTitle: 'Mother of the Bride',
-    groomFatherTitle: 'Father of the Groom',
-    groomMotherTitle: 'Mother of the Groom',
     ceremony: 'Ceremony',
     reception: 'Reception',
     cordiallyInvite: 'Cordially invite you to join us at the Wedding Reception of our beloved children',
@@ -173,10 +169,6 @@ const translations = {
     
     // Invitation Card
     with: 'dengan',
-    brideFatherTitle: 'Ayah Pengantin Perempuan',
-    brideMotherTitle: 'Ibu Pengantin Perempuan',
-    groomFatherTitle: 'Ayah Pengantin Lelaki',
-    groomMotherTitle: 'Ibu Pengantin Lelaki',
     ceremony: 'Akad Nikah',
     reception: 'Walimatul Urus',
     cordiallyInvite: 'Dengan hormatnya menjemput anda ke majlis perkahwinan anak kami',
@@ -294,10 +286,14 @@ const InvitationCard = ({ weddingData, language, t }: { weddingData: WeddingDeta
       {/* Groom's parents */}
       <div className="space-y-1">
         <h3 className="text-lg font-bold text-green-800">{weddingData.groom_father_name}</h3>
-        <p className="text-sm text-gray-600">{t.groomFatherTitle}</p>
+        <p className="text-sm text-gray-600">
+          {language === 'en' ? weddingData.groom_father_title_en : weddingData.groom_father_title_ms}
+        </p>
         <div className="text-lg font-semibold">&</div>
         <h3 className="text-lg font-bold text-green-800">{weddingData.groom_mother_name}</h3>
-        <p className="text-sm text-gray-600">{t.groomMotherTitle}</p>
+        <p className="text-sm text-gray-600">
+          {language === 'en' ? weddingData.groom_mother_title_en : weddingData.groom_mother_title_ms}
+        </p>
       </div>
 
       {/* Together with */}
@@ -308,10 +304,14 @@ const InvitationCard = ({ weddingData, language, t }: { weddingData: WeddingDeta
       {/* Bride's parents */}
       <div className="space-y-1">
         <h3 className="text-lg font-bold text-green-800">{weddingData.bride_father_name}</h3>
-        <p className="text-sm text-gray-600">{t.brideFatherTitle}</p>
+        <p className="text-sm text-gray-600">
+          {language === 'en' ? weddingData.bride_father_title_en : weddingData.bride_father_title_ms}
+        </p>
         <div className="text-lg font-semibold">&</div>
         <h3 className="text-lg font-bold text-green-800">{weddingData.bride_mother_name}</h3>
-        <p className="text-sm text-gray-600">{t.brideMotherTitle}</p>
+        <p className="text-sm text-gray-600">
+          {language === 'en' ? weddingData.bride_mother_title_en : weddingData.bride_mother_title_ms}
+        </p>
       </div>
 
       {/* Invitation message */}

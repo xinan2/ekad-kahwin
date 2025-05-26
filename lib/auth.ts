@@ -80,6 +80,15 @@ export interface WeddingDetails {
   groom_mother_name: string;
   bride_father_name: string;
   bride_mother_name: string;
+  // New customizable inviter title fields
+  groom_father_title_en: string;
+  groom_father_title_ms: string;
+  groom_mother_title_en: string;
+  groom_mother_title_ms: string;
+  bride_father_title_en: string;
+  bride_father_title_ms: string;
+  bride_mother_title_en: string;
+  bride_mother_title_ms: string;
   bismillah_text_en: string;
   bismillah_text_ms: string;
   with_pleasure_text_en: string;
@@ -159,6 +168,15 @@ async function initializeDefaultWeddingDetails() {
         groom_mother_name: 'SAFURAH BINTI HJ KAMARUL',
         bride_father_name: 'KHARUL ANUAR BIN JAMALUDDIN',
         bride_mother_name: 'AISHAH AIRIS BINTI ZAKARIA',
+        // Initialize with default title values
+        groom_father_title_en: 'Father of the Groom',
+        groom_father_title_ms: 'Ayah Pengantin Lelaki',
+        groom_mother_title_en: 'Mother of the Groom',
+        groom_mother_title_ms: 'Ibu Pengantin Lelaki',
+        bride_father_title_en: 'Father of the Bride',
+        bride_father_title_ms: 'Ayah Pengantin Perempuan',
+        bride_mother_title_en: 'Mother of the Bride',
+        bride_mother_title_ms: 'Ibu Pengantin Perempuan',
         bismillah_text_en: 'In the name of Allah, the Most Gracious, the Most Merciful',
         bismillah_text_ms: 'Dengan nama Allah Yang Maha Pemurah lagi Maha Penyayang',
         with_pleasure_text_en: 'With great pleasure, we',
@@ -476,6 +494,15 @@ export const weddingDetails = {
         groom_mother_name: details.groom_mother_name || '',
         bride_father_name: details.bride_father_name || '',
         bride_mother_name: details.bride_mother_name || '',
+        // New customizable inviter title fields
+        groom_father_title_en: details.groom_father_title_en || 'Father of the Groom',
+        groom_father_title_ms: details.groom_father_title_ms || 'Ayah Pengantin Lelaki',
+        groom_mother_title_en: details.groom_mother_title_en || 'Mother of the Groom',
+        groom_mother_title_ms: details.groom_mother_title_ms || 'Ibu Pengantin Lelaki',
+        bride_father_title_en: details.bride_father_title_en || 'Father of the Bride',
+        bride_father_title_ms: details.bride_father_title_ms || 'Ayah Pengantin Perempuan',
+        bride_mother_title_en: details.bride_mother_title_en || 'Mother of the Bride',
+        bride_mother_title_ms: details.bride_mother_title_ms || 'Ibu Pengantin Perempuan',
         bismillah_text_en: details.bismillah_text_en || 'In the name of Allah, the Most Gracious, the Most Merciful',
         bismillah_text_ms: details.bismillah_text_ms || 'Dengan nama Allah Yang Maha Pemurah lagi Maha Penyayang',
         with_pleasure_text_en: details.with_pleasure_text_en || 'With great pleasure, we',
