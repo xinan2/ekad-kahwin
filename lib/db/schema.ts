@@ -122,6 +122,19 @@ export const WeddingDetailsSchema = z.object({
   qr_code_url: z.string().default(''),
   qr_owner_name: z.string().default(''),
   qr_bank_name: z.string().default(''),
+}).refine((data) => {
+  // At least one parent must be provided for groom's side
+  const groomHasParent = (data.groom_father_name && data.groom_father_name.trim() !== '') || 
+                        (data.groom_mother_name && data.groom_mother_name.trim() !== '');
+  
+  // At least one parent must be provided for bride's side
+  const brideHasParent = (data.bride_father_name && data.bride_father_name.trim() !== '') || 
+                        (data.bride_mother_name && data.bride_mother_name.trim() !== '');
+  
+  return groomHasParent && brideHasParent;
+}, {
+  message: "At least one parent must be provided for both groom's and bride's families",
+  path: ["groom_father_name"] // This will show the error on the first field, but we'll handle it in the form
 });
 
 export type WeddingDetailsFormState = {

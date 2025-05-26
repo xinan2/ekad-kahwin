@@ -102,9 +102,11 @@ export async function updateWeddingDetails(
 ): Promise<WeddingDetailsFormState> {
   try {
     const formValues: Record<string, FormDataEntryValue | null> = {};
-    WeddingDetailsSchema.keyof().options.forEach(key => {
-      formValues[key] = formData.get(key);
-    });
+    
+    // Extract all form data entries
+    for (const [key, value] of formData.entries()) {
+      formValues[key] = value;
+    }
     
     const validatedFields = WeddingDetailsSchema.safeParse(formValues);
 

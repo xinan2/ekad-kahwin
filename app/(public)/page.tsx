@@ -285,15 +285,31 @@ const InvitationCard = ({ weddingData, language, t }: { weddingData: WeddingDeta
 
       {/* Groom's parents */}
       <div className="space-y-1">
-        <h3 className="text-lg font-bold text-green-800">{weddingData.groom_father_name}</h3>
-        <p className="text-sm text-gray-600">
-          {language === 'en' ? weddingData.groom_father_title_en : weddingData.groom_father_title_ms}
-        </p>
-        <div className="text-lg font-semibold">&</div>
-        <h3 className="text-lg font-bold text-green-800">{weddingData.groom_mother_name}</h3>
-        <p className="text-sm text-gray-600">
-          {language === 'en' ? weddingData.groom_mother_title_en : weddingData.groom_mother_title_ms}
-        </p>
+        {/* Show groom's father if name exists */}
+        {weddingData.groom_father_name && weddingData.groom_father_name.trim() !== '' && (
+          <>
+            <h3 className="text-lg font-bold text-green-800">{weddingData.groom_father_name}</h3>
+            <p className="text-sm text-gray-600">
+              {language === 'en' ? weddingData.groom_father_title_en : weddingData.groom_father_title_ms}
+            </p>
+          </>
+        )}
+        
+        {/* Show & only if both parents exist */}
+        {weddingData.groom_father_name && weddingData.groom_father_name.trim() !== '' && 
+         weddingData.groom_mother_name && weddingData.groom_mother_name.trim() !== '' && (
+          <div className="text-lg font-semibold">&</div>
+        )}
+        
+        {/* Show groom's mother if name exists */}
+        {weddingData.groom_mother_name && weddingData.groom_mother_name.trim() !== '' && (
+          <>
+            <h3 className="text-lg font-bold text-green-800">{weddingData.groom_mother_name}</h3>
+            <p className="text-sm text-gray-600">
+              {language === 'en' ? weddingData.groom_mother_title_en : weddingData.groom_mother_title_ms}
+            </p>
+          </>
+        )}
       </div>
 
       {/* Together with */}
@@ -303,15 +319,31 @@ const InvitationCard = ({ weddingData, language, t }: { weddingData: WeddingDeta
 
       {/* Bride's parents */}
       <div className="space-y-1">
-        <h3 className="text-lg font-bold text-green-800">{weddingData.bride_father_name}</h3>
-        <p className="text-sm text-gray-600">
-          {language === 'en' ? weddingData.bride_father_title_en : weddingData.bride_father_title_ms}
-        </p>
-        <div className="text-lg font-semibold">&</div>
-        <h3 className="text-lg font-bold text-green-800">{weddingData.bride_mother_name}</h3>
-        <p className="text-sm text-gray-600">
-          {language === 'en' ? weddingData.bride_mother_title_en : weddingData.bride_mother_title_ms}
-        </p>
+        {/* Show bride's father if name exists */}
+        {weddingData.bride_father_name && weddingData.bride_father_name.trim() !== '' && (
+          <>
+            <h3 className="text-lg font-bold text-green-800">{weddingData.bride_father_name}</h3>
+            <p className="text-sm text-gray-600">
+              {language === 'en' ? weddingData.bride_father_title_en : weddingData.bride_father_title_ms}
+            </p>
+          </>
+        )}
+        
+        {/* Show & only if both parents exist */}
+        {weddingData.bride_father_name && weddingData.bride_father_name.trim() !== '' && 
+         weddingData.bride_mother_name && weddingData.bride_mother_name.trim() !== '' && (
+          <div className="text-lg font-semibold">&</div>
+        )}
+        
+        {/* Show bride's mother if name exists */}
+        {weddingData.bride_mother_name && weddingData.bride_mother_name.trim() !== '' && (
+          <>
+            <h3 className="text-lg font-bold text-green-800">{weddingData.bride_mother_name}</h3>
+            <p className="text-sm text-gray-600">
+              {language === 'en' ? weddingData.bride_mother_title_en : weddingData.bride_mother_title_ms}
+            </p>
+          </>
+        )}
       </div>
 
       {/* Invitation message */}
