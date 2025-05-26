@@ -65,7 +65,11 @@ export async function submitRSVP(
     const rawName = sanitizeText(formData.get('name') as string || '', 100);
     const rawPhone = sanitizePhone(formData.get('phone') as string || '');
     const rawPax = Math.max(1, Math.min(parseInt(formData.get('pax') as string) || 1, 10));
-    const rawToken = sanitizeText(formData.get('hcaptchaToken') as string || '', 1000);
+    const rawToken = formData.get('hcaptchaToken') as string || '';
+    // Removed explicit type check and length truncation for hCaptcha token.
+    // The token is expected to be a string from the form data.
+    // If it's null/undefined, it defaults to an empty string.
+    // The Zod schema will then validate if it's a non-empty string before verification.
     
     // Log if inputs were suspicious
     const originalName = formData.get('name') as string || '';
