@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Quicksand, Dancing_Script } from "next/font/google";
+import { Quicksand, Italianno } from "next/font/google";
 import "./globals.css";
 
 const quicksand = Quicksand({
@@ -8,10 +8,10 @@ const quicksand = Quicksand({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const dancingScript = Dancing_Script({
-  variable: "--font-dancing-script",
+const italianno = Italianno({
+  variable: "--font-italianno",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${quicksand.variable} ${dancingScript.variable}`}>
+      <body className={`${quicksand.variable} ${italianno.variable}`}>
         {children}
       </body>
     </html>
