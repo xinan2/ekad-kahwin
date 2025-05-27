@@ -9,7 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['var(--font-quicksand)', 'system-ui', 'sans-serif'],
-        script: ['var(--font-italianno)', 'cursive'],
+        script: ['var(--font-oleo-script-swash-caps)', 'cursive'],
       },
     },
   },

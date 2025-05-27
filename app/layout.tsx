@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Quicksand, Italianno } from "next/font/google";
+import { Quicksand, Oleo_Script_Swash_Caps } from "next/font/google";
 import "./globals.css";
 
 const quicksand = Quicksand({
@@ -8,10 +8,10 @@ const quicksand = Quicksand({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const italianno = Italianno({
-  variable: "--font-italianno",
+const oleoScriptSwashCaps = Oleo_Script_Swash_Caps({
+  variable: "--font-oleo-script-swash-caps",
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${quicksand.variable} ${italianno.variable}`}>
+      <body className={`${quicksand.variable} ${oleoScriptSwashCaps.variable}`}>
         {children}
       </body>
     </html>
