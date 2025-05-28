@@ -1122,9 +1122,13 @@ export default function HomePage() {
             right: 0;
             z-index: 50;
             padding-bottom: env(safe-area-inset-bottom);
+            display: block !important;
           }
           .ios-content-area {
             padding-bottom: 180px; /* Space for button + bottom bar */
+          }
+          .android-only {
+            display: none !important;
           }
         }
         
@@ -1139,6 +1143,9 @@ export default function HomePage() {
           }
           .android-content-padding {
             padding-bottom: 120px; /* Space for bottom bar */
+          }
+          .ios-bottom-container {
+            display: none !important;
           }
         }
         
@@ -1258,14 +1265,7 @@ export default function HomePage() {
                   </div>
 
                   {/* Android only: Invitation Button Section */}
-                  <div className="relative z-20 px-4 pb-4 block android-only" style={{ display: 'block' }}>
-                    <style jsx>{`
-                      @supports (-webkit-touch-callout: none) {
-                        .android-only {
-                          display: none !important;
-                        }
-                      }
-                    `}</style>
+                  <div className="relative z-20 px-4 pb-4 android-only">
                     <div className="text-center">
                       <button
                         onClick={() => setShowInvitation(true)}
@@ -1317,15 +1317,7 @@ export default function HomePage() {
       {/* Fixed Bottom Navigation Bar - Always visible */}
       <div className={`${showInvitation ? 'hidden' : 'block'}`}>
         {/* iOS: Combined container for button + bottom bar */}
-        <div className="ios-bottom-container hidden" style={{ display: 'none' }}>
-          <style jsx>{`
-            @supports (-webkit-touch-callout: none) {
-              .ios-bottom-container {
-                display: block !important;
-              }
-            }
-          `}</style>
-          
+        <div className="ios-bottom-container">
           {/* iOS Invitation Button */}
           <div className="px-4 pb-2 pt-2">
             <div className="text-center">
@@ -1425,14 +1417,7 @@ export default function HomePage() {
         </div>
 
         {/* Android: Bottom Navigation Only */}
-        <div className="bottom-navigation android-only" style={{ display: 'block' }}>
-          <style jsx>{`
-            @supports (-webkit-touch-callout: none) {
-              .android-only {
-                display: none !important;
-              }
-            }
-          `}</style>
+        <div className="bottom-navigation android-only">
           <div className="px-4 pb-4 pt-2 bg-gradient-to-t from-black/40 to-transparent android-bottom-bar">
             {/* Floating navigation container */}
             <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden">
