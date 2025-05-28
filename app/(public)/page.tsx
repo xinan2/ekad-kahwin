@@ -948,7 +948,7 @@ const BottomSheet = ({
   if (!shouldRender) return null;
 
   return (
-    <div className="fixed inset-0 z-50">
+    <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop with fade animation */}
       <div 
         className={`absolute inset-0 backdrop-blur-sm transition-all duration-300 ease-out ${
@@ -959,20 +959,21 @@ const BottomSheet = ({
       
       {/* Bottom Sheet with slide animation */}
       <div 
-        className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[85vh] overflow-hidden transition-all duration-500 ease-out ${
+        className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl transition-all duration-500 ease-out safe-area-inset-bottom ${
           isAnimating 
             ? 'transform translate-y-0 opacity-100' 
             : 'transform translate-y-full opacity-0'
         }`}
         style={{
           boxShadow: '0 -10px 25px -5px rgba(0, 0, 0, 0.1), 0 -4px 6px -2px rgba(0, 0, 0, 0.05)',
-          transformOrigin: 'bottom center'
+          transformOrigin: 'bottom center',
+          maxHeight: '75vh'
         }}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full max-h-[75vh]">
           {/* Handle with subtle animation */}
           <div 
-            className={`w-12 h-1 bg-gray-300 rounded-full mx-auto mt-4 mb-2 transition-all duration-700 ease-out ${
+            className={`w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-2 flex-shrink-0 transition-all duration-700 ease-out ${
               isAnimating ? 'transform scale-100 opacity-100' : 'transform scale-75 opacity-0'
             }`}
             style={{ transitionDelay: isAnimating ? '200ms' : '0ms' }}
@@ -980,15 +981,15 @@ const BottomSheet = ({
           
           {/* Header with staggered animation */}
           <div 
-            className={`flex items-center justify-between px-6 py-4 border-b border-gray-100 transition-all duration-600 ease-out ${
+            className={`flex items-center justify-between px-4 py-3 border-b border-gray-100 flex-shrink-0 transition-all duration-600 ease-out ${
               isAnimating ? 'transform translate-y-0 opacity-100' : 'transform translate-y-6 opacity-0'
             }`}
             style={{ transitionDelay: isAnimating ? '300ms' : '0ms' }}
           >
-            <h2 className="text-lg font-semibold text-green-800">{title}</h2>
+            <h2 className="text-base font-semibold text-green-800">{title}</h2>
             <button
               onClick={handleClose}
-              className="p-2 rounded-full hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95"
+              className="p-1.5 rounded-full hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95"
             >
               <CloseIcon />
             </button>
@@ -996,7 +997,7 @@ const BottomSheet = ({
           
           {/* Scrollable Content with staggered animation */}
           <div 
-            className={`flex-1 overflow-y-auto px-6 py-4 transition-all duration-700 ease-out ${
+            className={`flex-1 overflow-y-auto px-4 py-4 transition-all duration-700 ease-out ${
               isAnimating ? 'transform translate-y-0 opacity-100' : 'transform translate-y-8 opacity-0'
             }`}
             style={{ transitionDelay: isAnimating ? '400ms' : '0ms' }}
@@ -1105,9 +1106,9 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen relative font-sans">
+    <div className="h-screen overflow-hidden relative font-sans">
       {/* Flip Container - iOS Compatible */}
-      <div className="relative w-full h-screen overflow-hidden">
+      <div className="relative w-full h-full overflow-hidden">
         {/* Front Side - Main Wedding Page */}
         <div 
           className={`absolute inset-0 w-full h-full transition-all duration-700 ease-in-out ${
@@ -1115,7 +1116,7 @@ export default function HomePage() {
           }`}
         >
           {/* Main Wedding Content */}
-          <div className="w-full h-full bg-green-900 relative">
+          <div className="w-full h-full bg-green-900 relative overflow-hidden">
             {/* Desktop Background Overlay */}
             <div className="hidden md:block fixed inset-0 z-5">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-transparent" />
@@ -1123,7 +1124,7 @@ export default function HomePage() {
             </div>
 
             {/* Main Content - Centered on Desktop */}
-            <div className="relative z-10 h-screen md:min-h-screen flex justify-center" style={{ height: '100dvh' }}>
+            <div className="relative z-10 h-full flex justify-center">
               {/* Desktop Note - Hidden on Mobile */}
               <div className="hidden md:block absolute top-4 left-1/2 transform -translate-x-1/2 z-30">
                 <div className="bg-white/90 backdrop-blur-sm text-green-800 text-sm px-4 py-2 rounded-full shadow-lg border border-green-100">
@@ -1132,7 +1133,7 @@ export default function HomePage() {
               </div>
               
               {/* Floating Language Selector */}
-              <div className="absolute top-4 right-4 z-30">
+              <div className="absolute top-4 right-4 z-30 safe-area-inset-top">
                 <button
                   onClick={() => setLanguage(language === 'en' ? 'ms' : 'en')}
                   className="bg-white/90 backdrop-blur-sm text-green-800 text-sm font-bold px-3 py-2 rounded-full shadow-lg border border-green-100 hover:bg-white transition-all duration-200 hover:scale-105 active:scale-95 min-w-[50px]"
@@ -1141,57 +1142,57 @@ export default function HomePage() {
                 </button>
               </div>
               
-              <div className="w-full max-w-md mx-auto h-full md:min-h-screen flex flex-col md:my-8 md:rounded-3xl md:overflow-hidden md:shadow-2xl md:border md:border-white/20 relative">
+              <div className="w-full max-w-md mx-auto h-full flex flex-col md:my-8 md:h-auto md:max-h-[calc(100vh-4rem)] md:rounded-3xl md:overflow-hidden md:shadow-2xl md:border md:border-white/20 relative">
                 {/* Background Image */}
                 <div className="absolute inset-0 z-0 overflow-hidden md:rounded-3xl">
                   <Image
                     src="/assets/images/bg.webp"
                     alt={t.weddingBackgroundAlt}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    className="object-cover"
                     priority
                   />
                   <div className="absolute inset-0 bg-black/20 md:bg-black/30" />
                 </div>
 
-                {/* Wedding Invitation Content */}
-                <div className="relative z-10 flex-1 flex items-center justify-center pb-40 md:pb-0">
-                  <div className="text-center text-white max-w-md mx-auto px-4">
+                {/* Wedding Invitation Content - Scrollable on small screens */}
+                <div className="relative z-10 flex-1 overflow-y-auto flex items-center justify-center">
+                  <div className="text-center text-white w-full px-4 py-8">
                     {/* Islamic Ornament */}
-                    <div className="mb-4 pt-20 md:pt-40">
+                    <div className="mb-4">
                       <div className="flex justify-center mb-4">
                         <Image
                           src={'/assets/images/bismillah.png'}
                           alt="bismillah"
-                          width={200}
-                          height={200}
+                          width={150}
+                          height={150}
                           priority
-                          className="w-1/2 h-auto"
+                          className="w-[40vw] max-w-[150px] h-auto"
                         />
                       </div>
-                      <div className="w-24 h-px bg-black/60 mx-auto mb-2" />
-                      <div className="text-sm tracking-widest opacity-80 text-black">
+                      <div className="w-16 h-px bg-black/60 mx-auto mb-1" />
+                      <div className="text-xs tracking-widest opacity-80 text-black">
                         {weddingData ? (language === 'en' ? weddingData.event_type_en : weddingData.event_type_ms) : t.walimatul}
                       </div>
-                      <div className="text-xs opacity-60 italic text-black">{t.weddingInvitation}</div>
-                      <div className="w-24 h-px bg-black/60 mx-auto mt-2" />
+                      <div className="text-[0.625rem] opacity-60 italic text-black">{t.weddingInvitation}</div>
+                      <div className="w-16 h-px bg-black/60 mx-auto mt-1" />
                     </div>
 
                     {/* Names */}
-                    <div className="mb-6 md:mb-8">
+                    <div className="mb-4">
                       {isLoadingData ? (
-                        <div className="space-y-4">
-                          <div className="h-12 bg-white/20 rounded animate-pulse"></div>
-                          <div className="h-8 bg-white/20 rounded animate-pulse mx-auto w-16"></div>
-                          <div className="h-12 bg-white/20 rounded animate-pulse"></div>
+                        <div className="space-y-2">
+                          <div className="h-10 bg-white/20 rounded animate-pulse"></div>
+                          <div className="h-6 bg-white/20 rounded animate-pulse mx-auto w-12"></div>
+                          <div className="h-10 bg-white/20 rounded animate-pulse"></div>
                         </div>
                       ) : (
                         <>
-                          <h1 className="text-5xl md:text-6xl font-script mb-2 text-green-100 leading-tight">
+                          <h1 className="text-[2.5rem] md:text-5xl font-script mb-1 text-green-100 leading-tight">
                             {weddingData?.groom_name || t.defaultGroomName}
                           </h1>
-                          <div className="text-3xl md:text-4xl mb-2 opacity-80 font-script">&</div>
-                          <h1 className="text-5xl md:text-6xl font-script text-green-100 leading-tight">
+                          <div className="text-2xl md:text-3xl mb-1 opacity-80 font-script">&</div>
+                          <h1 className="text-[2.5rem] md:text-5xl font-script text-green-100 leading-tight">
                             {weddingData?.bride_name || t.defaultBrideName}
                           </h1>
                         </>
@@ -1199,30 +1200,30 @@ export default function HomePage() {
                     </div>
 
                     {/* Date */}
-                    <div className="mb-6 md:mb-8">
-                      <div className="w-32 h-px bg-white/60 mx-auto mb-4" />
-                      <div className="text-base md:text-lg font-semibold">
+                    <div className="mb-6">
+                      <div className="w-20 h-px bg-white/60 mx-auto mb-2" />
+                      <div className="text-sm md:text-base font-semibold">
                         {weddingData ? (language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms) : t.date}
                       </div>
-                      <div className="w-32 h-px bg-white/60 mx-auto mt-4" />
+                      <div className="w-20 h-px bg-white/60 mx-auto mt-2" />
+                    </div>
+
+                    {/* Floating Invitation Button */}
+                    <div className="mt-8">
+                      <button
+                        onClick={() => setShowInvitation(true)}
+                        className="bg-white/95 backdrop-blur-sm text-green-800 px-5 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center space-x-2 border border-green-200/50 text-sm"
+                        style={{ WebkitTapHighlightColor: 'transparent' }}
+                      >
+                        <InvitationIcon />
+                        <span className="font-medium">{t.viewInvitation}</span>
+                      </button>
                     </div>
                   </div>
                 </div>
 
-                {/* Floating Invitation Button */}
-                <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 z-30 md:bottom-40">
-                  <button
-                    onClick={() => setShowInvitation(true)}
-                    className="bg-white/95 backdrop-blur-sm text-green-800 px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center space-x-2 border border-green-200/50"
-                    style={{ WebkitTapHighlightColor: 'transparent' }}
-                  >
-                    <InvitationIcon />
-                    <span className="font-medium">{t.viewInvitation}</span>
-                  </button>
-                </div>
-
-                {/* Bottom Navigation Bar - Fixed Position on Mobile */}
-                <div className="relative z-20 px-4 pb-4 md:pb-4 flex-shrink-0">
+                {/* Bottom Navigation Bar - Fixed Position */}
+                <div className="flex-shrink-0 relative z-20 px-4 pb-4 safe-area-inset-bottom">
                   {/* Floating navigation container */}
                   <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden">
                     {/* Subtle Islamic top accent */}
@@ -1236,16 +1237,16 @@ export default function HomePage() {
                     </div>
                     
                     {/* Navigation buttons - Now 5 columns */}
-                    <div className="relative grid grid-cols-5 gap-0.5 px-1 py-3">
+                    <div className="relative grid grid-cols-5 gap-0.5 px-1 py-2">
                       {/* Calendar */}
                       <button
                         onClick={() => openModal('calendar')}
-                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
                       >
-                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
+                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
                           <CalendarIcon />
                         </div>
-                        <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
+                        <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
                           {t.calendar}
                         </span>
                       </button>
@@ -1253,12 +1254,12 @@ export default function HomePage() {
                       {/* Contact */}
                       <button
                         onClick={() => openModal('contact')}
-                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
                       >
-                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
+                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
                           <ContactIcon />
                         </div>
-                        <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
+                        <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
                           {t.contact}
                         </span>
                       </button>
@@ -1266,12 +1267,12 @@ export default function HomePage() {
                       {/* Location */}
                       <button
                         onClick={() => openModal('location')}
-                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
                       >
-                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
+                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
                           <LocationIcon />
                         </div>
-                        <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
+                        <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
                           {t.location}
                         </span>
                       </button>
@@ -1279,12 +1280,12 @@ export default function HomePage() {
                       {/* RSVP */}
                       <button
                         onClick={() => openModal('rsvp')}
-                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
                       >
-                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
+                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
                           <RSVPIcon />
                         </div>
-                        <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
+                        <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
                           {t.rsvp}
                         </span>
                       </button>
@@ -1292,12 +1293,12 @@ export default function HomePage() {
                       {/* Gift */}
                       <button
                         onClick={() => openModal('gift')}
-                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
                       >
-                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
+                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
                           <GiftIcon />
                         </div>
-                        <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
+                        <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
                           {t.gift}
                         </span>
                       </button>
@@ -1316,22 +1317,24 @@ export default function HomePage() {
           }`}
         >
           {/* Invitation Card Content */}
-          <div className="w-full h-full bg-white relative overflow-y-auto">
+          <div className="w-full h-full bg-white relative flex flex-col">
             {/* Back Button */}
-            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-4">
+            <div className="flex-shrink-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-3 safe-area-inset-top">
               <button
                 onClick={() => setShowInvitation(false)}
                 className="flex items-center space-x-2 text-green-700 hover:text-green-800 transition-colors"
               >
                 <BackIcon />
-                <span className="font-medium">{t.backToHome}</span>
+                <span className="font-medium text-sm">{t.backToHome}</span>
               </button>
             </div>
 
             {/* Invitation Card */}
-            <div className="min-h-[calc(100vh-80px)] flex items-center justify-center p-4">
-              <div className="w-full max-w-md mx-auto">
-                <InvitationCard weddingData={weddingData} language={language} t={t} />
+            <div className="flex-1 overflow-y-auto">
+              <div className="min-h-full flex items-center justify-center p-4">
+                <div className="w-full max-w-md mx-auto">
+                  <InvitationCard weddingData={weddingData} language={language} t={t} />
+                </div>
               </div>
             </div>
           </div>
@@ -1346,8 +1349,6 @@ export default function HomePage() {
       >
         {getModalContent()}
       </BottomSheet>
-
-
     </div>
   );
 }
