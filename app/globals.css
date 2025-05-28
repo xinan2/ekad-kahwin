@@ -6,17 +6,11 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  /* Fix for iOS Safari height issues */
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
 }
 
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Additional Safari iOS font rendering fixes */
-  -webkit-text-size-adjust: 100%;
-  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -28,114 +22,6 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-/* Fix for Safari iOS backdrop-blur issues */
-.backdrop-blur-sm {
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-}
-
-.backdrop-blur {
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-
-.backdrop-blur-lg {
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-}
-
-/* Safari iOS specific fixes for button interactions */
-button, 
-input[type="button"], 
-input[type="submit"] {
-  -webkit-appearance: none;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
-
-/* Fix for iOS Safari 100vh issues */
-.min-h-screen {
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-}
-
-/* Fix Safari iOS transform and positioning issues */
-.fixed {
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-}
-
-/* Safari iOS specific font rendering fixes */
-@supports (-webkit-touch-callout: none) {
-  .font-script {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    font-feature-settings: "kern" 1;
-  }
-  
-  /* Fix Safari iOS text scaling issues */
-  * {
-    -webkit-text-size-adjust: 100%;
-  }
-  
-  /* Fix Safari iOS button appearance */
-  button {
-    -webkit-appearance: none;
-    border-radius: 0;
-  }
-  
-  /* Fix Safari iOS input appearance */
-  input, textarea, select {
-    -webkit-appearance: none;
-    border-radius: 0;
-  }
-  
-  /* Fix Safari iOS scrolling issues */
-  .overflow-y-auto {
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  /* Force hardware acceleration for better performance on Safari iOS */
-  .transition-all, .transition-transform {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-  }
-}
-
-/* iPhone 13 Pro and above specific fixes */
-@media only screen 
-  and (device-width: 390px) 
-  and (device-height: 844px) 
-  and (-webkit-device-pixel-ratio: 3),
-only screen 
-  and (device-width: 428px) 
-  and (device-height: 926px) 
-  and (-webkit-device-pixel-ratio: 3),
-only screen 
-  and (device-width: 393px) 
-  and (device-height: 852px) 
-  and (-webkit-device-pixel-ratio: 3) {
-  
-  .min-h-screen {
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-  }
-  
-  /* Fix backdrop-blur specifically for these devices */
-  .backdrop-blur-sm {
-    -webkit-backdrop-filter: blur(4px) !important;
-    backdrop-filter: blur(4px) !important;
-  }
-  
-  .backdrop-blur-lg {
-    -webkit-backdrop-filter: blur(16px) !important;
-    backdrop-filter: blur(16px) !important;
-  }
 }
 
 @media (prefers-color-scheme: dark) {

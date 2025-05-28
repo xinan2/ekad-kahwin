@@ -1123,7 +1123,7 @@ export default function HomePage() {
             </div>
 
             {/* Main Content - Centered on Desktop */}
-            <div className="relative z-10 h-screen md:min-h-screen flex justify-center" style={{ height: '100dvh' }}>
+            <div className="relative z-10 h-screen md:min-h-screen flex justify-center" style={{ height: '100%' }}>
               {/* Desktop Note - Hidden on Mobile */}
               <div className="hidden md:block absolute top-4 left-1/2 transform -translate-x-1/2 z-30">
                 <div className="bg-white/90 backdrop-blur-sm text-green-800 text-sm px-4 py-2 rounded-full shadow-lg border border-green-100">
@@ -1224,7 +1224,7 @@ export default function HomePage() {
                 {/* Bottom Navigation Bar - Fixed Position on Mobile */}
                 <div className="relative z-20 px-4 pb-4 md:pb-4 flex-shrink-0">
                   {/* Floating navigation container */}
-                  <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden">
+                  <div className="bg-white/95 rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden">
                     {/* Subtle Islamic top accent */}
                     <div className="h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent"></div>
                     

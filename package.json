@@ -8,13 +8,6 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "iOS >= 10",
-    "Safari >= 10"
-  ],
   "dependencies": {
     "@hcaptcha/react-hcaptcha": "^1.12.0",
     "@hookform/resolvers": "^5.0.1",
