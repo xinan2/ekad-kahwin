@@ -5,9 +5,8 @@
 /* Prevent scrolling and ensure full viewport height on all devices */
 html {
   height: 100%;
-  overflow: hidden;
-  /* Prevent bounce/elastic scrolling on iOS */
-  position: fixed;
+  /* Remove fixed positioning as it causes issues with bottom navigation */
+  /* position: fixed; */
   width: 100%;
 }
 
@@ -20,6 +19,9 @@ body {
   -webkit-text-size-adjust: 100%;
   /* Prevent tap highlight on iOS */
   -webkit-tap-highlight-color: transparent;
+  /* Prevent elastic scrolling on iOS */
+  overscroll-behavior: none;
+  position: relative;
 }
 
 /* Root app container should fill viewport */

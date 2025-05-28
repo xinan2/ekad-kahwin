@@ -2,37 +2,47 @@
 
 ## Issues Fixed
 1. **Fixed viewport height** - Now uses 100vh/100% height instead of min-height
-2. **Prevented scrolling** - HTML and body are now fixed position with overflow hidden
-3. **Bottom navigation bar** - Always stays at the bottom with safe-area-inset-bottom
+2. **Prevented scrolling** - Body has overflow hidden with overscroll-behavior: none
+3. **Bottom navigation bar** - Always stays at the bottom using flexbox layout
 4. **Content scaling** - Uses rem and vw units for responsive sizing
+5. **Safe areas** - Properly handles iOS safe areas for notched devices
 
 ## CSS Changes Made
 
 ### Global Styles (globals.css)
-- Set `html` to fixed position with 100% height
-- Prevented elastic/bounce scrolling on iOS
-- Added safe area classes for iOS devices
+- Set `html` and `body` to 100% height
+- Removed fixed positioning on html (was causing bottom nav to be cut off)
+- Added `overscroll-behavior: none` to prevent elastic scrolling
+- Added safe area inset classes for iOS devices
 - Disabled text size adjustment on orientation change
 
 ### Layout Changes
-- Added viewport meta configuration
+- Added viewport meta configuration with viewport-fit="cover"
 - Set maximum scale to 1 to prevent zooming
-- Added viewport-fit="cover" for full screen on notched devices
+- Applied height classes to html and body elements
 
-### Component Changes
-- Main container uses `h-screen` instead of `min-h-screen`
-- Content area has `overflow-y-auto` for scrollable sections
-- Bottom navigation uses `flex-shrink-0` to maintain fixed size
-- Used smaller font sizes and spacing for better fit
+### Component Structure
+- Main container uses flexbox layout with `flex-col`
+- Content area has `flex-1` and `overflow-y-auto` for scrollable sections
+- Bottom navigation is outside the scrollable area
+- Used gradient background on nav container for better visibility
+- Applied safe-area-inset-bottom to the navigation container
 
 ## Testing Steps
 
 ### iPhone 13 Pro and Above (Safari)
 1. Open the app in Safari
 2. Check that the bottom navigation bar is always visible
-3. Verify no scrolling occurs on the main page
+3. Verify no page scrolling occurs (only content area scrolls)
 4. Test landscape orientation - content should resize
 5. Test the bottom sheet modal - should not exceed 75vh
+6. Verify bottom nav doesn't get cut off by home indicator
+
+### Android Chrome
+1. Open the app in Chrome
+2. Verify bottom navigation is visible
+3. Check that page doesn't scroll
+4. Test responsive behavior
 
 ### Device-Specific Tests
 - **iPhone 13 Pro**: 390 x 844 pixels
@@ -42,10 +52,11 @@
 
 ### Key Areas to Verify
 1. Language selector button stays in safe area
-2. Bottom navigation doesn't overlap with home indicator
+2. Bottom navigation is always visible and doesn't overlap with home indicator
 3. Content between header and navigation is scrollable if needed
 4. Modal sheets respect safe areas
-5. No horizontal scrolling occurs
+5. No horizontal or vertical page scrolling occurs
+6. Bottom navigation has proper padding for safe areas
 
 ## Debugging Tips
 If issues persist:
@@ -53,8 +64,10 @@ If issues persist:
 2. Use `window.visualViewport` to debug viewport dimensions
 3. Test with Safari's responsive design mode
 4. Clear Safari cache and reload
+5. Check if safe-area-inset-bottom is being applied
 
 ## Additional Considerations
-- The app now uses `dvh` units where supported for dynamic viewport height
-- Safe area insets are applied to top and bottom elements
-- Touch events have webkit-tap-highlight-color disabled 
+- The app uses flexbox layout for proper content distribution
+- Safe area insets are applied to navigation container
+- Touch events have webkit-tap-highlight-color disabled
+- Background gradient added to bottom navigation area for better visibility 

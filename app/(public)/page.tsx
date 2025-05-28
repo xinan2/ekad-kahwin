@@ -1116,15 +1116,15 @@ export default function HomePage() {
           }`}
         >
           {/* Main Wedding Content */}
-          <div className="w-full h-full bg-green-900 relative overflow-hidden">
+          <div className="w-full h-full bg-green-900 relative flex flex-col">
             {/* Desktop Background Overlay */}
-            <div className="hidden md:block fixed inset-0 z-5">
+            <div className="hidden md:block absolute inset-0 z-0">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
             </div>
 
-            {/* Main Content - Centered on Desktop */}
-            <div className="relative z-10 h-full flex justify-center">
+            {/* Main Content Container */}
+            <div className="relative z-10 flex-1 flex justify-center overflow-hidden">
               {/* Desktop Note - Hidden on Mobile */}
               <div className="hidden md:block absolute top-4 left-1/2 transform -translate-x-1/2 z-30">
                 <div className="bg-white/90 backdrop-blur-sm text-green-800 text-sm px-4 py-2 rounded-full shadow-lg border border-green-100">
@@ -1142,7 +1142,7 @@ export default function HomePage() {
                 </button>
               </div>
               
-              <div className="w-full max-w-md mx-auto h-full flex flex-col md:my-8 md:h-auto md:max-h-[calc(100vh-4rem)] md:rounded-3xl md:overflow-hidden md:shadow-2xl md:border md:border-white/20 relative">
+              <div className="w-full max-w-md mx-auto flex flex-col h-full md:my-8 md:h-auto md:max-h-[calc(100vh-4rem)] md:rounded-3xl md:overflow-hidden md:shadow-2xl md:border md:border-white/20 relative">
                 {/* Background Image */}
                 <div className="absolute inset-0 z-0 overflow-hidden md:rounded-3xl">
                   <Image
@@ -1155,7 +1155,7 @@ export default function HomePage() {
                   <div className="absolute inset-0 bg-black/20 md:bg-black/30" />
                 </div>
 
-                {/* Wedding Invitation Content - Scrollable on small screens */}
+                {/* Wedding Invitation Content - Scrollable area */}
                 <div className="relative z-10 flex-1 overflow-y-auto flex items-center justify-center">
                   <div className="text-center text-white w-full px-4 py-8">
                     {/* Islamic Ornament */}
@@ -1222,10 +1222,10 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Bottom Navigation Bar - Fixed Position */}
-                <div className="flex-shrink-0 relative z-20 px-4 pb-4 safe-area-inset-bottom">
+                {/* Bottom Navigation Bar - Fixed at bottom */}
+                <div className="relative z-20 px-4 pb-4 pt-2 bg-gradient-to-t from-black/40 to-transparent">
                   {/* Floating navigation container */}
-                  <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden">
+                  <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden safe-area-inset-bottom">
                     {/* Subtle Islamic top accent */}
                     <div className="h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent"></div>
                     
