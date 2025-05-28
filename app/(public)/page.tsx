@@ -403,67 +403,33 @@ const CalendarModal = ({ t, weddingData, language }: { t: typeof translations.en
   const ceremonyDateTime = language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms;
   const receptionDateTime = language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms;
 
-  // Helper function to parse wedding date and time into ISO format
-  const parseWeddingDateTime = (dateStr: string, timeStr: string) => {
+  // Simple function to convert time to 24-hour format for calendar
+  const convertTimeTo24Hour = (timeStr: string) => {
+    if (!timeStr || timeStr.trim() === '') {
+      return '10:00'; // Default to 10:00 AM
+    }
+    
     try {
-      // Default to December 27, 2025 if parsing fails
-      let year = 2025;
-      let month = 12; // December
-      let day = 27;
-      
-      // Try to extract date from the wedding_date string
-      // Handle formats like "December 20, 2025", "20 Disember 2025", "Sat, 27 Dec 2025"
-      const dateMatch = dateStr.match(/(\d{1,2})[,\s]*(\w+)[,\s]*(\d{4})/);
-      if (dateMatch) {
-        day = parseInt(dateMatch[1]);
-        year = parseInt(dateMatch[3]);
+      // Handle formats like "02:00 PM", "2:00 PM", "14:00"
+      const timeMatch = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+      if (timeMatch) {
+        let hours = parseInt(timeMatch[1]);
+        const minutes = timeMatch[2];
+        const ampm = timeMatch[3]?.toUpperCase();
         
-        const monthStr = dateMatch[2].toLowerCase();
-        const monthMap: { [key: string]: number } = {
-          'january': 1, 'jan': 1, 'januari': 1,
-          'february': 2, 'feb': 2, 'februari': 2,
-          'march': 3, 'mar': 3, 'mac': 3,
-          'april': 4, 'apr': 4,
-          'may': 5, 'mei': 5,
-          'june': 6, 'jun': 6,
-          'july': 7, 'jul': 7, 'julai': 7,
-          'august': 8, 'aug': 8, 'ogos': 8,
-          'september': 9, 'sep': 9,
-          'october': 10, 'oct': 10, 'oktober': 10,
-          'november': 11, 'nov': 11,
-          'december': 12, 'dec': 12, 'disember': 12, 'dis': 12
-        };
-        
-        month = monthMap[monthStr] || 12;
-      }
-      
-      // Parse time (handle formats like "02:00 PM", "14:00", "2:00 PM")
-      let hours = 10; // Default to 10 AM
-      let minutes = 0;
-      
-      if (timeStr && timeStr.trim()) {
-        const timeMatch = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
-        if (timeMatch) {
-          hours = parseInt(timeMatch[1]);
-          minutes = parseInt(timeMatch[2]);
-          
-          const ampm = timeMatch[3]?.toUpperCase();
-          if (ampm === 'PM' && hours !== 12) {
-            hours += 12;
-          } else if (ampm === 'AM' && hours === 12) {
-            hours = 0;
-          }
+        if (ampm === 'PM' && hours !== 12) {
+          hours += 12;
+        } else if (ampm === 'AM' && hours === 12) {
+          hours = 0;
         }
+        
+        return `${hours.toString().padStart(2, '0')}:${minutes}`;
       }
       
-      // Create date and format as YYYYMMDDTHHMMSS
-      const date = new Date(year, month - 1, day, hours, minutes);
-      const isoString = date.toISOString().replace(/[-:]/g, '').split('.')[0];
-      return isoString;
+      return '10:00'; // Default fallback
     } catch (error) {
-      console.error('Error parsing date/time:', error);
-      // Return default date/time
-      return '20251227T100000';
+      console.error('Error converting time:', error);
+      return '10:00'; // Default fallback
     }
   };
 
@@ -472,13 +438,13 @@ const CalendarModal = ({ t, weddingData, language }: { t: typeof translations.en
     const eventTitle = `${t.wedding} ${weddingData.groom_name} & ${weddingData.bride_name}`;
     const eventTitleEncoded = encodeURIComponent(eventTitle);
     
-    // Use ceremony start time or default to 10 AM
-    const ceremonyStart = weddingData.ceremony_time_start || '10:00 AM';
-    const startDate = parseWeddingDateTime(weddingData.wedding_date, ceremonyStart);
+    // Use actual reception start time or default
+    const receptionStartTime = convertTimeTo24Hour(weddingData.reception_time_start || '11:30 AM');
+    const startDate = `20250726T${receptionStartTime.replace(':', '')}00`; // July 26, 2025
     
-    // Use reception end time or default to 4 PM
-    const receptionEnd = weddingData.reception_time_end || '4:00 PM';
-    const endDate = parseWeddingDateTime(weddingData.wedding_date, receptionEnd);
+    // Use actual reception end time or default
+    const receptionEndTime = convertTimeTo24Hour(weddingData.reception_time_end || '4:00 PM');
+    const endDate = `20250726T${receptionEndTime.replace(':', '')}00`; // July 26, 2025
     
     const location = encodeURIComponent(`${weddingData.venue_name}, ${weddingData.venue_address}`);
     
@@ -504,6 +470,8 @@ const CalendarModal = ({ t, weddingData, language }: { t: typeof translations.en
       groomName: weddingData.groom_name,
       brideName: weddingData.bride_name,
       venue: weddingData.venue_name,
+      receptionStartTime,
+      receptionEndTime,
       startDate,
       endDate,
       url: googleCalendarUrl
@@ -516,13 +484,13 @@ const CalendarModal = ({ t, weddingData, language }: { t: typeof translations.en
   const downloadICSFile = () => {
     const eventTitle = `${t.wedding} ${weddingData.groom_name} & ${weddingData.bride_name}`;
     
-    // Use ceremony start time or default to 10 AM
-    const ceremonyStart = weddingData.ceremony_time_start || '10:00 AM';
-    const startDate = parseWeddingDateTime(weddingData.wedding_date, ceremonyStart);
+    // Use actual reception start time or default
+    const receptionStartTime = convertTimeTo24Hour(weddingData.reception_time_start || '11:30 AM');
+    const startDate = `20250726T${receptionStartTime.replace(':', '')}00`; // July 26, 2025
     
-    // Use reception end time or default to 4 PM
-    const receptionEnd = weddingData.reception_time_end || '4:00 PM';
-    const endDate = parseWeddingDateTime(weddingData.wedding_date, receptionEnd);
+    // Use actual reception end time or default
+    const receptionEndTime = convertTimeTo24Hour(weddingData.reception_time_end || '4:00 PM');
+    const endDate = `20250726T${receptionEndTime.replace(':', '')}00`; // July 26, 2025
     
     // Build description with conditional ceremony and reception information
     let eventDescription = `${t.weddingInvitationText}\\n\\n${weddingData.groom_name} & ${weddingData.bride_name}`;
