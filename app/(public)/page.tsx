@@ -1222,7 +1222,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Bottom Navigation Bar - Fixed Position on Mobile */}
-                <div className="relative z-20 px-4 pb-4 md:pb-4 flex-shrink-0">
+                <div className="absolute bottom-0 left-0 right-0 z-20 px-4 pb-4 md:pb-4">
                   {/* Floating navigation container */}
                   <div className="bg-white/95 rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden">
                     {/* Subtle Islamic top accent */}
