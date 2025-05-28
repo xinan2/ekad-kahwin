@@ -17,18 +17,6 @@ const corinthia = Corinthia({
 export const metadata: Metadata = {
   title: "Walimatul Urus - Ahmad Adam & Dr. Hawa",
   description: "Wedding Invitation - Ahmad Adam & Dr. Hawa - December 27th, 2025",
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover'
-  },
-  other: {
-    'mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-status-bar-style': 'black-translucent'
-  }
 };
 
 export default function RootLayout({

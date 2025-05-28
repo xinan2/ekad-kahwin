@@ -238,13 +238,9 @@ const BackIcon = () => (
 
 const GiftIcon = () => (
   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-  </svg>
-);
-
-const LanguageIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+    <rect x="3" y="8" width="18" height="4" rx="1" strokeWidth={2}/>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8V21M7 8V21h10V8M12 8V4m-3 4h6" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 4c0-1.1.9-2 2-2s2 .9 2 2-2 2-2 2-2-.9-2-2zm6 0c0-1.1.9-2 2-2s2 .9 2 2-2 2-2 2-2-.9-2-2z" />
   </svg>
 );
 
@@ -963,13 +959,13 @@ const BottomSheet = ({
       
       {/* Bottom Sheet with slide animation */}
       <div 
-        className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[80vh] max-h-[80dvh] overflow-hidden transition-all duration-500 ease-out ${
+        className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[85vh] overflow-hidden transition-all duration-500 ease-out ${
           isAnimating 
             ? 'transform translate-y-0 opacity-100' 
             : 'transform translate-y-full opacity-0'
         }`}
         style={{
-          boxShadow: '0 -0.625rem 1.5625rem -0.3125rem rgba(0, 0, 0, 0.1), 0 -0.25rem 0.375rem -0.125rem rgba(0, 0, 0, 0.05)',
+          boxShadow: '0 -10px 25px -5px rgba(0, 0, 0, 0.1), 0 -4px 6px -2px rgba(0, 0, 0, 0.05)',
           transformOrigin: 'bottom center'
         }}
       >
@@ -1109,212 +1105,233 @@ export default function HomePage() {
   };
 
   return (
-    <div className="h-screen-safe relative font-sans bg-green-900 overflow-hidden">
-      {/* Desktop Background Overlay */}
-      <div className="hidden md:block fixed inset-0 z-5">
-        <div className="absolute inset-0 bg-gradient-to-br from-green-800 via-green-900 to-green-950" />
+    <div className="min-h-screen relative font-sans">
+      {/* Flip Container - iOS Compatible */}
+      <div className="relative w-full h-screen overflow-hidden">
+        {/* Front Side - Main Wedding Page */}
         <div 
-          className="absolute inset-0" 
-          style={{
-            background: 'radial-gradient(circle at center, rgba(34, 197, 94, 0.2) 0%, transparent 50%, rgba(20, 83, 45, 0.3) 100%)'
-          }}
-        />
-        
-        {/* Subtle Islamic Pattern */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3Ccircle cx='15' cy='15' r='1'/%3E%3Ccircle cx='45' cy='15' r='1'/%3E%3Ccircle cx='15' cy='45' r='1'/%3E%3Ccircle cx='45' cy='45' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
-          }}></div>
-        </div>
-      </div>
+          className={`absolute inset-0 w-full h-full transition-all duration-700 ease-in-out ${
+            showInvitation ? 'opacity-0 pointer-events-none transform scale-95' : 'opacity-100 pointer-events-auto transform scale-100'
+          }`}
+        >
+          {/* Main Wedding Content */}
+          <div className="w-full h-full bg-green-900 relative">
+            {/* Desktop Background Overlay */}
+            <div className="hidden md:block fixed inset-0 z-5">
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
+            </div>
 
-      {/* Main Content - Centered on Desktop */}
-      <div className="relative z-10 h-screen-safe flex justify-center">
-        {/* Desktop Note - Hidden on Mobile */}
-        <div className="hidden md:block absolute top-4 left-1/2 transform -translate-x-1/2 z-30">
-          <div className="bg-white/90 backdrop-blur-sm text-green-800 text-sm px-4 py-2 rounded-full shadow-lg border border-green-100">
-            {t.bestViewedMobile}
-          </div>
-        </div>
-        
-        <div className="w-full max-w-md mx-auto h-screen-safe flex flex-col md:my-8 md:rounded-3xl md:overflow-hidden md:shadow-2xl md:border md:border-white/20 bg-black/10 md:bg-black/5 relative">
-          {/* Background Image - Only in Container */}
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/assets/images/bg.webp"
-              alt={t.weddingBackgroundAlt}
-              fill
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-black/20 md:bg-black/30" />
-          </div>
-          
-          {/* Wedding Invitation Content - Flexible height */}
-          <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-8 min-h-0">
-            <div className="text-center text-white max-w-md mx-auto">
-              {/* Islamic Ornament */}
-              <div className="mb-6">
-                <div className="text-3xl mb-3">☪</div>
-                <div className="w-20 h-px bg-white/60 mx-auto mb-2" />
-                <div className="text-sm tracking-widest opacity-80">
-                  {weddingData ? (language === 'en' ? weddingData.event_type_en : weddingData.event_type_ms) : 'WALIMATUL URUS'}
+            {/* Main Content - Centered on Desktop */}
+            <div className="relative z-10 h-screen md:min-h-screen flex justify-center" style={{ height: '100dvh' }}>
+              {/* Desktop Note - Hidden on Mobile */}
+              <div className="hidden md:block absolute top-4 left-1/2 transform -translate-x-1/2 z-30">
+                <div className="bg-white/90 backdrop-blur-sm text-green-800 text-sm px-4 py-2 rounded-full shadow-lg border border-green-100">
+                  {t.bestViewedMobile}
                 </div>
-                <div className="text-xs opacity-60 italic">{t.weddingInvitation}</div>
-                <div className="w-20 h-px bg-white/60 mx-auto mt-2" />
               </div>
-
-              {/* Names */}
-              <div className="mb-6">
-                {isLoadingData ? (
-                  <div className="space-y-3">
-                    <div className="h-10 bg-white/20 rounded animate-pulse"></div>
-                    <div className="h-6 bg-white/20 rounded animate-pulse mx-auto w-12"></div>
-                    <div className="h-10 bg-white/20 rounded animate-pulse"></div>
-                  </div>
-                ) : (
-                  <>
-                    <h1 className="text-4xl md:text-5xl font-script font-bold mb-2 text-green-100 leading-tight">
-                      {weddingData?.groom_name || t.defaultGroomName}
-                    </h1>
-                    <div className="text-2xl mb-2 opacity-80 font-script">&</div>
-                    <h1 className="text-4xl md:text-5xl font-script font-bold text-green-100 leading-tight">
-                      {weddingData?.bride_name || t.defaultBrideName}
-                    </h1>
-                  </>
-                )}
-              </div>
-
-              {/* Date */}
-              <div className="mb-6">
-                <div className="w-28 h-px bg-white/60 mx-auto mb-3" />
-                <div className="text-base md:text-lg font-semibold">
-                  {weddingData ? (language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms) : t.date}
-                </div>
-                <div className="w-28 h-px bg-white/60 mx-auto mt-3" />
-              </div>
-
-              {/* View Invitation Button */}
-              {!showInvitation && (
+              
+              {/* Floating Language Selector */}
+              <div className="absolute top-4 right-4 z-30">
                 <button
-                  onClick={() => setShowInvitation(true)}
-                  className="bg-white/90 backdrop-blur-sm text-green-800 px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-white transition-all duration-200 active:scale-95"
+                  onClick={() => setLanguage(language === 'en' ? 'ms' : 'en')}
+                  className="bg-white/90 backdrop-blur-sm text-green-800 text-sm font-bold px-3 py-2 rounded-full shadow-lg border border-green-100 hover:bg-white transition-all duration-200 hover:scale-105 active:scale-95 min-w-[50px]"
                 >
-                  <div className="flex items-center space-x-2">
+                  {language.toUpperCase()}
+                </button>
+              </div>
+              
+              <div className="w-full max-w-md mx-auto h-full md:min-h-screen flex flex-col md:my-8 md:rounded-3xl md:overflow-hidden md:shadow-2xl md:border md:border-white/20 relative">
+                {/* Background Image */}
+                <div className="absolute inset-0 z-0 overflow-hidden md:rounded-3xl">
+                  <Image
+                    src="/assets/images/bg.webp"
+                    alt={t.weddingBackgroundAlt}
+                    layout="fill"
+                    objectFit="cover"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-black/20 md:bg-black/30" />
+                </div>
+
+                {/* Wedding Invitation Content */}
+                <div className="relative z-10 flex-1 flex items-center justify-center pb-40 md:pb-0">
+                  <div className="text-center text-white max-w-md mx-auto px-4">
+                    {/* Islamic Ornament */}
+                    <div className="mb-4 pt-20 md:pt-40">
+                      <div className="flex justify-center mb-4">
+                        <Image
+                          src={'/assets/images/bismillah.png'}
+                          alt="bismillah"
+                          width={200}
+                          height={200}
+                          priority
+                          className="w-1/2 h-auto"
+                        />
+                      </div>
+                      <div className="w-24 h-px bg-black/60 mx-auto mb-2" />
+                      <div className="text-sm tracking-widest opacity-80 text-black">
+                        {weddingData ? (language === 'en' ? weddingData.event_type_en : weddingData.event_type_ms) : t.walimatul}
+                      </div>
+                      <div className="text-xs opacity-60 italic text-black">{t.weddingInvitation}</div>
+                      <div className="w-24 h-px bg-black/60 mx-auto mt-2" />
+                    </div>
+
+                    {/* Names */}
+                    <div className="mb-6 md:mb-8">
+                      {isLoadingData ? (
+                        <div className="space-y-4">
+                          <div className="h-12 bg-white/20 rounded animate-pulse"></div>
+                          <div className="h-8 bg-white/20 rounded animate-pulse mx-auto w-16"></div>
+                          <div className="h-12 bg-white/20 rounded animate-pulse"></div>
+                        </div>
+                      ) : (
+                        <>
+                          <h1 className="text-5xl md:text-6xl font-script mb-2 text-green-100 leading-tight">
+                            {weddingData?.groom_name || t.defaultGroomName}
+                          </h1>
+                          <div className="text-3xl md:text-4xl mb-2 opacity-80 font-script">&</div>
+                          <h1 className="text-5xl md:text-6xl font-script text-green-100 leading-tight">
+                            {weddingData?.bride_name || t.defaultBrideName}
+                          </h1>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Date */}
+                    <div className="mb-6 md:mb-8">
+                      <div className="w-32 h-px bg-white/60 mx-auto mb-4" />
+                      <div className="text-base md:text-lg font-semibold">
+                        {weddingData ? (language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms) : t.date}
+                      </div>
+                      <div className="w-32 h-px bg-white/60 mx-auto mt-4" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Invitation Button */}
+                <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 z-30 md:bottom-40">
+                  <button
+                    onClick={() => setShowInvitation(true)}
+                    className="bg-white/95 backdrop-blur-sm text-green-800 px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center space-x-2 border border-green-200/50"
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
+                  >
                     <InvitationIcon />
-                    <span>{t.viewInvitation}</span>
-                  </div>
-                </button>
-              )}
+                    <span className="font-medium">{t.viewInvitation}</span>
+                  </button>
+                </div>
 
-              {/* Back Button */}
-              {showInvitation && (
-                <button
-                  onClick={() => setShowInvitation(false)}
-                  className="bg-white/90 backdrop-blur-sm text-green-800 px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-white transition-all duration-200 active:scale-95"
-                >
-                  <div className="flex items-center space-x-2">
-                    <BackIcon />
-                    <span>{t.backToHome}</span>
+                {/* Bottom Navigation Bar - Fixed Position on Mobile */}
+                <div className="relative z-20 px-4 pb-4 md:pb-4 flex-shrink-0">
+                  {/* Floating navigation container */}
+                  <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden">
+                    {/* Subtle Islamic top accent */}
+                    <div className="h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent"></div>
+                    
+                    {/* Subtle pattern overlay */}
+                    <div className="absolute inset-0 opacity-[0.015]">
+                      <div className="absolute inset-0" style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23166534'%3E%3Ccircle cx='15' cy='15' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
+                      }}></div>
+                    </div>
+                    
+                    {/* Navigation buttons - Now 5 columns */}
+                    <div className="relative grid grid-cols-5 gap-0.5 px-1 py-3">
+                      {/* Calendar */}
+                      <button
+                        onClick={() => openModal('calendar')}
+                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                      >
+                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
+                          <CalendarIcon />
+                        </div>
+                        <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
+                          {t.calendar}
+                        </span>
+                      </button>
+
+                      {/* Contact */}
+                      <button
+                        onClick={() => openModal('contact')}
+                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                      >
+                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
+                          <ContactIcon />
+                        </div>
+                        <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
+                          {t.contact}
+                        </span>
+                      </button>
+
+                      {/* Location */}
+                      <button
+                        onClick={() => openModal('location')}
+                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                      >
+                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
+                          <LocationIcon />
+                        </div>
+                        <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
+                          {t.location}
+                        </span>
+                      </button>
+
+                      {/* RSVP */}
+                      <button
+                        onClick={() => openModal('rsvp')}
+                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                      >
+                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
+                          <RSVPIcon />
+                        </div>
+                        <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
+                          {t.rsvp}
+                        </span>
+                      </button>
+
+                      {/* Gift */}
+                      <button
+                        onClick={() => openModal('gift')}
+                        className="flex flex-col items-center space-y-1 p-1.5 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                      >
+                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
+                          <GiftIcon />
+                        </div>
+                        <span className="text-xs font-medium text-green-700 group-hover:text-green-800">
+                          {t.gift}
+                        </span>
+                      </button>
+                    </div>
                   </div>
-                </button>
-              )}
+                </div>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Bottom Navigation Bar - Fixed at bottom with safe area */}
-          <div className="relative z-20 px-4 pb-safe">
-            {/* Floating navigation container */}
-            <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden">
-              {/* Subtle Islamic top accent */}
-              <div className="h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent"></div>
-              
-              {/* Subtle pattern overlay */}
-              <div className="absolute inset-0 opacity-[0.015]">
-                <div className="absolute inset-0" style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23166534'%3E%3Ccircle cx='15' cy='15' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
-                }}></div>
-              </div>
-              
-              {/* Navigation buttons - Responsive grid */}
-              <div className="relative grid grid-cols-6 gap-1 px-2 py-3">
-                {/* Calendar */}
-                <button
-                  onClick={() => openModal('calendar')}
-                  className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                >
-                  <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
-                    <CalendarIcon />
-                  </div>
-                  <span className="text-xs font-medium text-green-700 group-hover:text-green-800 leading-tight">
-                    {t.calendar}
-                  </span>
-                </button>
+        {/* Back Side - Invitation Card */}
+        <div 
+          className={`absolute inset-0 w-full h-full transition-all duration-700 ease-in-out ${
+            showInvitation ? 'opacity-100 pointer-events-auto transform scale-100' : 'opacity-0 pointer-events-none transform scale-95'
+          }`}
+        >
+          {/* Invitation Card Content */}
+          <div className="w-full h-full bg-white relative overflow-y-auto">
+            {/* Back Button */}
+            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-4">
+              <button
+                onClick={() => setShowInvitation(false)}
+                className="flex items-center space-x-2 text-green-700 hover:text-green-800 transition-colors"
+              >
+                <BackIcon />
+                <span className="font-medium">{t.backToHome}</span>
+              </button>
+            </div>
 
-                {/* Contact */}
-                <button
-                  onClick={() => openModal('contact')}
-                  className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                >
-                  <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
-                    <ContactIcon />
-                  </div>
-                  <span className="text-xs font-medium text-green-700 group-hover:text-green-800 leading-tight">
-                    {t.contact}
-                  </span>
-                </button>
-
-                {/* Location */}
-                <button
-                  onClick={() => openModal('location')}
-                  className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                >
-                  <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
-                    <LocationIcon />
-                  </div>
-                  <span className="text-xs font-medium text-green-700 group-hover:text-green-800 leading-tight">
-                    {t.location}
-                  </span>
-                </button>
-
-                {/* RSVP */}
-                <button
-                  onClick={() => openModal('rsvp')}
-                  className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                >
-                  <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
-                    <RSVPIcon />
-                  </div>
-                  <span className="text-xs font-medium text-green-700 group-hover:text-green-800 leading-tight">
-                    {t.rsvp}
-                  </span>
-                </button>
-
-                {/* Gift */}
-                <button
-                  onClick={() => openModal('gift')}
-                  className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                >
-                  <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
-                    <GiftIcon />
-                  </div>
-                  <span className="text-xs font-medium text-green-700 group-hover:text-green-800 leading-tight">
-                    {t.gift}
-                  </span>
-                </button>
-
-                {/* Language */}
-                <button
-                  onClick={() => openModal('language')}
-                  className="flex flex-col items-center space-y-1 p-2 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                >
-                  <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200">
-                    <LanguageIcon />
-                  </div>
-                  <span className="text-xs font-medium text-green-700 group-hover:text-green-800 leading-tight">
-                    {t.language}
-                  </span>
-                </button>
+            {/* Invitation Card */}
+            <div className="min-h-[calc(100vh-80px)] flex items-center justify-center p-4">
+              <div className="w-full max-w-md mx-auto">
+                <InvitationCard weddingData={weddingData} language={language} t={t} />
               </div>
             </div>
           </div>
@@ -1330,16 +1347,7 @@ export default function HomePage() {
         {getModalContent()}
       </BottomSheet>
 
-      {/* Invitation Card Modal */}
-      {showInvitation && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
-          <div className="h-screen-safe flex items-center justify-center p-4">
-            <div className="w-full max-w-md">
-              <InvitationCard weddingData={weddingData} language={language} t={t} />
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
