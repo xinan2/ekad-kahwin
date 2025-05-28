@@ -1155,61 +1155,66 @@ export default function HomePage() {
                   <div className="absolute inset-0 bg-black/20 md:bg-black/30" />
                 </div>
 
-                {/* Wedding Invitation Content - Scrollable area */}
-                <div className="relative z-10 flex-1 overflow-y-auto flex items-center justify-center">
-                  <div className="text-center text-white w-full px-4 py-8">
-                    {/* Islamic Ornament */}
-                    <div className="mb-4">
-                      <div className="flex justify-center mb-4">
-                        <Image
-                          src={'/assets/images/bismillah.png'}
-                          alt="bismillah"
-                          width={150}
-                          height={150}
-                          priority
-                          className="w-[40vw] max-w-[150px] h-auto"
-                        />
-                      </div>
-                      <div className="w-16 h-px bg-black/60 mx-auto mb-1" />
-                      <div className="text-xs tracking-widest opacity-80 text-black">
-                        {weddingData ? (language === 'en' ? weddingData.event_type_en : weddingData.event_type_ms) : t.walimatul}
-                      </div>
-                      <div className="text-[0.625rem] opacity-60 italic text-black">{t.weddingInvitation}</div>
-                      <div className="w-16 h-px bg-black/60 mx-auto mt-1" />
-                    </div>
-
-                    {/* Names */}
-                    <div className="mb-4">
-                      {isLoadingData ? (
-                        <div className="space-y-2">
-                          <div className="h-10 bg-white/20 rounded animate-pulse"></div>
-                          <div className="h-6 bg-white/20 rounded animate-pulse mx-auto w-12"></div>
-                          <div className="h-10 bg-white/20 rounded animate-pulse"></div>
+                {/* Wedding Invitation Content - Fixed height to accommodate bottom bar */}
+                <div className="relative z-10 flex-1 flex flex-col h-full">
+                  {/* Main content area - takes remaining space above bottom sections */}
+                  <div className="flex-1 flex items-center justify-center px-4 pt-16 pb-4">
+                    <div className="text-center text-white w-full">
+                      {/* Islamic Ornament */}
+                      <div className="mb-6">
+                        <div className="flex justify-center mb-4">
+                          <Image
+                            src={'/assets/images/bismillah.png'}
+                            alt="bismillah"
+                            width={150}
+                            height={150}
+                            priority
+                            className="w-[35vw] max-w-[120px] h-auto"
+                          />
                         </div>
-                      ) : (
-                        <>
-                          <h1 className="text-[2.5rem] md:text-5xl font-script mb-1 text-green-100 leading-tight">
-                            {weddingData?.groom_name || t.defaultGroomName}
-                          </h1>
-                          <div className="text-2xl md:text-3xl mb-1 opacity-80 font-script">&</div>
-                          <h1 className="text-[2.5rem] md:text-5xl font-script text-green-100 leading-tight">
-                            {weddingData?.bride_name || t.defaultBrideName}
-                          </h1>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Date */}
-                    <div className="mb-6">
-                      <div className="w-20 h-px bg-white/60 mx-auto mb-2" />
-                      <div className="text-sm md:text-base font-semibold">
-                        {weddingData ? (language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms) : t.date}
+                        <div className="w-16 h-px bg-black/60 mx-auto mb-1" />
+                        <div className="text-xs tracking-widest opacity-80 text-black">
+                          {weddingData ? (language === 'en' ? weddingData.event_type_en : weddingData.event_type_ms) : t.walimatul}
+                        </div>
+                        <div className="text-[0.625rem] opacity-60 italic text-black">{t.weddingInvitation}</div>
+                        <div className="w-16 h-px bg-black/60 mx-auto mt-1" />
                       </div>
-                      <div className="w-20 h-px bg-white/60 mx-auto mt-2" />
-                    </div>
 
-                    {/* Floating Invitation Button */}
-                    <div className="mt-8">
+                      {/* Names */}
+                      <div className="mb-6">
+                        {isLoadingData ? (
+                          <div className="space-y-2">
+                            <div className="h-8 bg-white/20 rounded animate-pulse"></div>
+                            <div className="h-6 bg-white/20 rounded animate-pulse mx-auto w-12"></div>
+                            <div className="h-8 bg-white/20 rounded animate-pulse"></div>
+                          </div>
+                        ) : (
+                          <>
+                            <h1 className="text-[2.2rem] md:text-5xl font-script mb-1 text-green-100 leading-tight">
+                              {weddingData?.groom_name || t.defaultGroomName}
+                            </h1>
+                            <div className="text-xl md:text-3xl mb-1 opacity-80 font-script">&</div>
+                            <h1 className="text-[2.2rem] md:text-5xl font-script text-green-100 leading-tight">
+                              {weddingData?.bride_name || t.defaultBrideName}
+                            </h1>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Date */}
+                      <div className="mb-4">
+                        <div className="w-20 h-px bg-white/60 mx-auto mb-2" />
+                        <div className="text-sm md:text-base font-semibold">
+                          {weddingData ? (language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms) : t.date}
+                        </div>
+                        <div className="w-20 h-px bg-white/60 mx-auto mt-2" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Invitation Button Section - Fixed above bottom bar */}
+                  <div className="relative z-20 px-4 pb-2">
+                    <div className="text-center">
                       <button
                         onClick={() => setShowInvitation(true)}
                         className="bg-white/95 backdrop-blur-sm text-green-800 px-5 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center space-x-2 border border-green-200/50 text-sm"
@@ -1220,88 +1225,88 @@ export default function HomePage() {
                       </button>
                     </div>
                   </div>
-                </div>
 
-                {/* Bottom Navigation Bar - Fixed at bottom */}
-                <div className="relative z-20 px-4 pb-4 pt-2 bg-gradient-to-t from-black/40 to-transparent">
-                  {/* Floating navigation container */}
-                  <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden safe-area-inset-bottom">
-                    {/* Subtle Islamic top accent */}
-                    <div className="h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent"></div>
-                    
-                    {/* Subtle pattern overlay */}
-                    <div className="absolute inset-0 opacity-[0.015]">
-                      <div className="absolute inset-0" style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23166534'%3E%3Ccircle cx='15' cy='15' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
-                      }}></div>
-                    </div>
-                    
-                    {/* Navigation buttons - Now 5 columns */}
-                    <div className="relative grid grid-cols-5 gap-0.5 px-1 py-2">
-                      {/* Calendar */}
-                      <button
-                        onClick={() => openModal('calendar')}
-                        className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                      >
-                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
-                          <CalendarIcon />
-                        </div>
-                        <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
-                          {t.calendar}
-                        </span>
-                      </button>
+                  {/* Bottom Navigation Bar - Fixed at bottom with safe area */}
+                  <div className="relative z-20 px-4 pb-4 pt-2 bg-gradient-to-t from-black/40 to-transparent">
+                    {/* Floating navigation container */}
+                    <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+                      {/* Subtle Islamic top accent */}
+                      <div className="h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent"></div>
+                      
+                      {/* Subtle pattern overlay */}
+                      <div className="absolute inset-0 opacity-[0.015]">
+                        <div className="absolute inset-0" style={{
+                          backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23166534'%3E%3Ccircle cx='15' cy='15' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
+                        }}></div>
+                      </div>
+                      
+                      {/* Navigation buttons - Now 5 columns */}
+                      <div className="relative grid grid-cols-5 gap-0.5 px-1 py-2">
+                        {/* Calendar */}
+                        <button
+                          onClick={() => openModal('calendar')}
+                          className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        >
+                          <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
+                            <CalendarIcon />
+                          </div>
+                          <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
+                            {t.calendar}
+                          </span>
+                        </button>
 
-                      {/* Contact */}
-                      <button
-                        onClick={() => openModal('contact')}
-                        className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                      >
-                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
-                          <ContactIcon />
-                        </div>
-                        <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
-                          {t.contact}
-                        </span>
-                      </button>
+                        {/* Contact */}
+                        <button
+                          onClick={() => openModal('contact')}
+                          className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        >
+                          <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
+                            <ContactIcon />
+                          </div>
+                          <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
+                            {t.contact}
+                          </span>
+                        </button>
 
-                      {/* Location */}
-                      <button
-                        onClick={() => openModal('location')}
-                        className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                      >
-                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
-                          <LocationIcon />
-                        </div>
-                        <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
-                          {t.location}
-                        </span>
-                      </button>
+                        {/* Location */}
+                        <button
+                          onClick={() => openModal('location')}
+                          className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        >
+                          <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
+                            <LocationIcon />
+                          </div>
+                          <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
+                            {t.location}
+                          </span>
+                        </button>
 
-                      {/* RSVP */}
-                      <button
-                        onClick={() => openModal('rsvp')}
-                        className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                      >
-                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
-                          <RSVPIcon />
-                        </div>
-                        <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
-                          {t.rsvp}
-                        </span>
-                      </button>
+                        {/* RSVP */}
+                        <button
+                          onClick={() => openModal('rsvp')}
+                          className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        >
+                          <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
+                            <RSVPIcon />
+                          </div>
+                          <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
+                            {t.rsvp}
+                          </span>
+                        </button>
 
-                      {/* Gift */}
-                      <button
-                        onClick={() => openModal('gift')}
-                        className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                      >
-                        <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
-                          <GiftIcon />
-                        </div>
-                        <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
-                          {t.gift}
-                        </span>
-                      </button>
+                        {/* Gift */}
+                        <button
+                          onClick={() => openModal('gift')}
+                          className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+                        >
+                          <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
+                            <GiftIcon />
+                          </div>
+                          <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
+                            {t.gift}
+                          </span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1319,7 +1324,7 @@ export default function HomePage() {
           {/* Invitation Card Content */}
           <div className="w-full h-full bg-white relative flex flex-col">
             {/* Back Button */}
-            <div className="flex-shrink-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-3 safe-area-inset-top">
+            <div className="flex-shrink-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-3" style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}>
               <button
                 onClick={() => setShowInvitation(false)}
                 className="flex items-center space-x-2 text-green-700 hover:text-green-800 transition-colors"
