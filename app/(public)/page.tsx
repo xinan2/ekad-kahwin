@@ -1222,40 +1222,40 @@ export default function HomePage() {
                   <div className="flex-1 flex items-center justify-center px-4 pt-16 pb-4">
                     <div className="text-center text-white w-full">
                       {/* Islamic Ornament */}
-                      <div className="mb-6">
-                        <div className="flex justify-center mb-4">
+                      <div className="mb-4">
+                        <div className="flex justify-center mb-3">
                           <Image
                             src={'/assets/images/bismillah.png'}
                             alt="bismillah"
                             width={150}
                             height={150}
                             priority
-                            className="w-[38vw] max-w-[140px] h-auto"
+                            className="w-[42vw] max-w-[160px] h-auto"
                           />
                         </div>
                         <div className="w-16 h-px bg-black/60 mx-auto mb-1" />
-                        <div className="text-sm tracking-widest opacity-80 text-black">
+                        <div className="text-base tracking-widest opacity-80 text-black font-medium">
                           {weddingData ? (language === 'en' ? weddingData.event_type_en : weddingData.event_type_ms) : t.walimatul}
                         </div>
-                        <div className="text-xs opacity-60 italic text-black">{t.weddingInvitation}</div>
+                        <div className="text-sm opacity-60 italic text-black">{t.weddingInvitation}</div>
                         <div className="w-16 h-px bg-black/60 mx-auto mt-1" />
                       </div>
 
                       {/* Names */}
-                      <div className="mb-6">
+                      <div className="mb-4">
                         {isLoadingData ? (
                           <div className="space-y-2">
-                            <div className="h-10 bg-white/20 rounded animate-pulse"></div>
+                            <div className="h-12 bg-white/20 rounded animate-pulse"></div>
                             <div className="h-8 bg-white/20 rounded animate-pulse mx-auto w-12"></div>
-                            <div className="h-10 bg-white/20 rounded animate-pulse"></div>
+                            <div className="h-12 bg-white/20 rounded animate-pulse"></div>
                           </div>
                         ) : (
                           <>
-                            <h1 className="text-[2.4rem] md:text-5xl font-script mb-2 text-green-100 leading-tight">
+                            <h1 className="text-[2.8rem] md:text-6xl font-script mb-1 text-green-100 leading-tight">
                               {weddingData?.groom_name || t.defaultGroomName}
                             </h1>
-                            <div className="text-xl md:text-3xl mb-2 opacity-80 font-script">&</div>
-                            <h1 className="text-[2.4rem] md:text-5xl font-script text-green-100 leading-tight">
+                            <div className="text-2xl md:text-4xl mb-1 opacity-80 font-script">&</div>
+                            <h1 className="text-[2.8rem] md:text-6xl font-script text-green-100 leading-tight">
                               {weddingData?.bride_name || t.defaultBrideName}
                             </h1>
                           </>
@@ -1263,9 +1263,9 @@ export default function HomePage() {
                       </div>
 
                       {/* Date */}
-                      <div className="mb-4">
+                      <div className="mb-3">
                         <div className="w-20 h-px bg-white/60 mx-auto mb-2" />
-                        <div className="text-base md:text-lg font-semibold">
+                        <div className="text-lg md:text-xl font-semibold">
                           {weddingData ? (language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms) : t.date}
                         </div>
                         <div className="w-20 h-px bg-white/60 mx-auto mt-2" />
