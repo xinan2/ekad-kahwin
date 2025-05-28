@@ -1215,6 +1215,22 @@ export default function HomePage() {
           right: 0;
           z-index: 50;
         }
+
+        /* Enhanced shimmer loading animation */
+        @keyframes shimmer {
+          0% {
+            background-position: -200px 0;
+          }
+          100% {
+            background-position: calc(200px + 100%) 0;
+          }
+        }
+        
+        .shimmer {
+          background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
+          background-size: 200px 100%;
+          animation: shimmer 1.5s infinite;
+        }
       `}</style>
 
       {/* Flip Container - iOS Compatible */}
@@ -1294,9 +1310,9 @@ export default function HomePage() {
                       <div className="mb-4">
                         {isLoadingData ? (
                           <div className="space-y-2">
-                            <div className="h-12 bg-white/20 rounded animate-pulse"></div>
-                            <div className="h-8 bg-white/20 rounded animate-pulse mx-auto w-12"></div>
-                            <div className="h-12 bg-white/20 rounded animate-pulse"></div>
+                            <div className="h-12 bg-white/20 rounded shimmer"></div>
+                            <div className="h-8 bg-white/20 rounded shimmer mx-auto w-12"></div>
+                            <div className="h-12 bg-white/20 rounded shimmer"></div>
                           </div>
                         ) : (
                           <>
@@ -1314,9 +1330,13 @@ export default function HomePage() {
                       {/* Date */}
                       <div className="mb-3">
                         <div className="w-20 h-px bg-white/60 mx-auto mb-2" />
-                        <div className="text-lg md:text-xl font-semibold">
-                          {weddingData ? (language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms) : t.date}
-                        </div>
+                        {isLoadingData ? (
+                          <div className="h-7 bg-white/20 rounded shimmer mx-auto w-48"></div>
+                        ) : (
+                          <div className="text-lg md:text-xl font-semibold">
+                            {weddingData ? (language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms) : t.date}
+                          </div>
+                        )}
                         <div className="w-20 h-px bg-white/60 mx-auto mt-2" />
                       </div>
                     </div>
