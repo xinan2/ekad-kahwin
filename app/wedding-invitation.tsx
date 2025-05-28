@@ -693,9 +693,13 @@ const BottomSheet = ({
     <div className="fixed inset-0 z-50">
       {/* Backdrop with fade animation */}
       <div 
-        className={`absolute inset-0 backdrop-blur-sm transition-all duration-300 ease-out ${
+        className={`absolute inset-0 transition-all duration-300 ease-out ${
           isAnimating ? 'bg-black/50 opacity-100' : 'bg-black/0 opacity-0'
         }`}
+        style={{
+          backdropFilter: 'blur(4px)',
+          WebkitBackdropFilter: 'blur(4px)',
+        }}
         onClick={handleBackdropClick}
       />
       
@@ -708,7 +712,11 @@ const BottomSheet = ({
         }`}
         style={{
           boxShadow: '0 -10px 25px -5px rgba(0, 0, 0, 0.1), 0 -4px 6px -2px rgba(0, 0, 0, 0.05)',
-          transformOrigin: 'bottom center'
+          transformOrigin: 'bottom center',
+          // Safari iOS specific fixes
+          WebkitTransform: isAnimating ? 'translate3d(0, 0, 0)' : 'translate3d(0, 100%, 0)',
+          WebkitBackfaceVisibility: 'hidden',
+          WebkitPerspective: 1000,
         }}
       >
         <div className="flex flex-col h-full">
@@ -926,7 +934,13 @@ export default function HomePage() {
           {/* Bottom Navigation Bar - Floating Design */}
           <div className="relative z-20 px-4 pb-4">
             {/* Floating navigation container */}
-            <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden">
+            <div 
+              className="bg-white/95 rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden"
+              style={{
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+              }}
+            >
               {/* Subtle Islamic top accent */}
               <div className="h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent"></div>
               
