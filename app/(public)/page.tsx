@@ -1112,12 +1112,14 @@ export default function HomePage() {
         /* iOS Safari specific */
         @supports (-webkit-touch-callout: none) {
           .ios-safe-area {
-            height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            height: calc(100vh - env(safe-area-inset-top));
             padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
           }
           .ios-bottom-bar {
             padding-bottom: calc(16px + env(safe-area-inset-bottom));
+          }
+          .ios-content-padding {
+            padding-bottom: calc(140px + env(safe-area-inset-bottom));
           }
         }
         
@@ -1130,6 +1132,9 @@ export default function HomePage() {
           .android-bottom-bar {
             padding-bottom: 16px;
           }
+          .android-content-padding {
+            padding-bottom: 120px; /* Space for bottom bar */
+          }
         }
         
         /* Ensure bottom bar is always visible */
@@ -1139,11 +1144,6 @@ export default function HomePage() {
           left: 0;
           right: 0;
           z-index: 50;
-        }
-        
-        /* Content area that accounts for fixed bottom bar */
-        .content-with-bottom-bar {
-          padding-bottom: 120px; /* Space for bottom bar */
         }
       `}</style>
 
@@ -1196,7 +1196,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Wedding Invitation Content - With bottom padding for fixed bottom bar */}
-                <div className="relative z-10 flex-1 flex flex-col h-full content-with-bottom-bar">
+                <div className="relative z-10 flex-1 flex flex-col h-full ios-content-padding android-content-padding">
                   {/* Main content area - takes remaining space above bottom sections */}
                   <div className="flex-1 flex items-center justify-center px-4 pt-16 pb-4">
                     <div className="text-center text-white w-full">
