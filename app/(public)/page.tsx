@@ -1138,13 +1138,22 @@ export default function HomePage() {
             height: 100vh;
             height: 100dvh; /* Dynamic viewport height for Android */
           }
-          .android-bottom-bar {
+          .android-bottom-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
             padding-bottom: 16px;
+            display: block !important;
           }
-          .android-content-padding {
-            padding-bottom: 120px; /* Space for bottom bar */
+          .android-content-area {
+            padding-bottom: 180px; /* Space for button + bottom bar */
           }
           .ios-bottom-container {
+            display: none !important;
+          }
+          .android-only {
             display: none !important;
           }
         }
@@ -1208,45 +1217,45 @@ export default function HomePage() {
                 </div>
 
                 {/* Wedding Invitation Content - With bottom padding for fixed bottom bar */}
-                <div className="relative z-10 flex-1 flex flex-col h-full ios-content-area android-content-padding">
+                <div className="relative z-10 flex-1 flex flex-col h-full ios-content-area android-content-area">
                   {/* Main content area - takes remaining space above bottom sections */}
                   <div className="flex-1 flex items-center justify-center px-4 pt-16 pb-4">
                     <div className="text-center text-white w-full">
                       {/* Islamic Ornament */}
-                      <div className="mb-4">
-                        <div className="flex justify-center mb-3">
+                      <div className="mb-6">
+                        <div className="flex justify-center mb-4">
                           <Image
                             src={'/assets/images/bismillah.png'}
                             alt="bismillah"
                             width={150}
                             height={150}
                             priority
-                            className="w-[32vw] max-w-[110px] h-auto"
+                            className="w-[38vw] max-w-[140px] h-auto"
                           />
                         </div>
                         <div className="w-16 h-px bg-black/60 mx-auto mb-1" />
-                        <div className="text-xs tracking-widest opacity-80 text-black">
+                        <div className="text-sm tracking-widest opacity-80 text-black">
                           {weddingData ? (language === 'en' ? weddingData.event_type_en : weddingData.event_type_ms) : t.walimatul}
                         </div>
-                        <div className="text-[0.625rem] opacity-60 italic text-black">{t.weddingInvitation}</div>
+                        <div className="text-xs opacity-60 italic text-black">{t.weddingInvitation}</div>
                         <div className="w-16 h-px bg-black/60 mx-auto mt-1" />
                       </div>
 
                       {/* Names */}
-                      <div className="mb-4">
+                      <div className="mb-6">
                         {isLoadingData ? (
                           <div className="space-y-2">
-                            <div className="h-8 bg-white/20 rounded animate-pulse"></div>
-                            <div className="h-6 bg-white/20 rounded animate-pulse mx-auto w-12"></div>
-                            <div className="h-8 bg-white/20 rounded animate-pulse"></div>
+                            <div className="h-10 bg-white/20 rounded animate-pulse"></div>
+                            <div className="h-8 bg-white/20 rounded animate-pulse mx-auto w-12"></div>
+                            <div className="h-10 bg-white/20 rounded animate-pulse"></div>
                           </div>
                         ) : (
                           <>
-                            <h1 className="text-[2rem] md:text-5xl font-script mb-1 text-green-100 leading-tight">
+                            <h1 className="text-[2.4rem] md:text-5xl font-script mb-2 text-green-100 leading-tight">
                               {weddingData?.groom_name || t.defaultGroomName}
                             </h1>
-                            <div className="text-lg md:text-3xl mb-1 opacity-80 font-script">&</div>
-                            <h1 className="text-[2rem] md:text-5xl font-script text-green-100 leading-tight">
+                            <div className="text-xl md:text-3xl mb-2 opacity-80 font-script">&</div>
+                            <h1 className="text-[2.4rem] md:text-5xl font-script text-green-100 leading-tight">
                               {weddingData?.bride_name || t.defaultBrideName}
                             </h1>
                           </>
@@ -1256,7 +1265,7 @@ export default function HomePage() {
                       {/* Date */}
                       <div className="mb-4">
                         <div className="w-20 h-px bg-white/60 mx-auto mb-2" />
-                        <div className="text-sm md:text-base font-semibold">
+                        <div className="text-base md:text-lg font-semibold">
                           {weddingData ? (language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms) : t.date}
                         </div>
                         <div className="w-20 h-px bg-white/60 mx-auto mt-2" />
@@ -1416,10 +1425,24 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Android: Bottom Navigation Only */}
-        <div className="bottom-navigation android-only">
-          <div className="px-4 pb-4 pt-2 bg-gradient-to-t from-black/40 to-transparent android-bottom-bar">
-            {/* Floating navigation container */}
+        {/* Android: Combined container for button + bottom bar */}
+        <div className="android-bottom-container">
+          {/* Android Invitation Button */}
+          <div className="px-4 pb-2 pt-2">
+            <div className="text-center">
+              <button
+                onClick={() => setShowInvitation(true)}
+                className="bg-white/95 backdrop-blur-sm text-green-800 px-5 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center space-x-2 border border-green-200/50 text-sm"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
+              >
+                <InvitationIcon />
+                <span className="font-medium">{t.viewInvitation}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Android Bottom Navigation */}
+          <div className="px-4 pb-4 pt-2 bg-gradient-to-t from-black/40 to-transparent">
             <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden">
               {/* Subtle Islamic top accent */}
               <div className="h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent"></div>
@@ -1431,7 +1454,7 @@ export default function HomePage() {
                 }}></div>
               </div>
               
-              {/* Navigation buttons - Now 5 columns */}
+              {/* Navigation buttons */}
               <div className="relative grid grid-cols-5 gap-0.5 px-1 py-2">
                 {/* Calendar */}
                 <button
