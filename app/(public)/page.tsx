@@ -1107,6 +1107,46 @@ export default function HomePage() {
 
   return (
     <div className="h-screen overflow-hidden relative font-sans">
+      {/* Add browser-specific styles */}
+      <style jsx global>{`
+        /* iOS Safari specific */
+        @supports (-webkit-touch-callout: none) {
+          .ios-safe-area {
+            height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+          }
+          .ios-bottom-bar {
+            padding-bottom: calc(16px + env(safe-area-inset-bottom));
+          }
+        }
+        
+        /* Android Chrome specific */
+        @supports not (-webkit-touch-callout: none) {
+          .android-safe-area {
+            height: 100vh;
+            height: 100dvh; /* Dynamic viewport height for Android */
+          }
+          .android-bottom-bar {
+            padding-bottom: 16px;
+          }
+        }
+        
+        /* Ensure bottom bar is always visible */
+        .bottom-navigation {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 50;
+        }
+        
+        /* Content area that accounts for fixed bottom bar */
+        .content-with-bottom-bar {
+          padding-bottom: 120px; /* Space for bottom bar */
+        }
+      `}</style>
+
       {/* Flip Container - iOS Compatible */}
       <div className="relative w-full h-full overflow-hidden">
         {/* Front Side - Main Wedding Page */}
@@ -1116,7 +1156,7 @@ export default function HomePage() {
           }`}
         >
           {/* Main Wedding Content */}
-          <div className="w-full h-full bg-green-900 relative flex flex-col">
+          <div className="w-full h-full bg-green-900 relative flex flex-col ios-safe-area android-safe-area">
             {/* Desktop Background Overlay */}
             <div className="hidden md:block absolute inset-0 z-0">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-transparent" />
@@ -1133,7 +1173,7 @@ export default function HomePage() {
               </div>
               
               {/* Floating Language Selector */}
-              <div className="absolute top-4 right-4 z-30 safe-area-inset-top">
+              <div className="absolute top-4 right-4 z-30">
                 <button
                   onClick={() => setLanguage(language === 'en' ? 'ms' : 'en')}
                   className="bg-white/90 backdrop-blur-sm text-green-800 text-sm font-bold px-3 py-2 rounded-full shadow-lg border border-green-100 hover:bg-white transition-all duration-200 hover:scale-105 active:scale-95 min-w-[50px]"
@@ -1155,10 +1195,10 @@ export default function HomePage() {
                   <div className="absolute inset-0 bg-black/20 md:bg-black/30" />
                 </div>
 
-                {/* Wedding Invitation Content - Fixed height to accommodate bottom bar */}
-                <div className="relative z-10 flex flex-col h-full">
+                {/* Wedding Invitation Content - With bottom padding for fixed bottom bar */}
+                <div className="relative z-10 flex-1 flex flex-col h-full content-with-bottom-bar">
                   {/* Main content area - takes remaining space above bottom sections */}
-                  <div className="flex-1 flex items-center justify-center px-4 pt-16" style={{ paddingBottom: '140px' }}>
+                  <div className="flex-1 flex items-center justify-center px-4 pt-16 pb-4">
                     <div className="text-center text-white w-full">
                       {/* Islamic Ornament */}
                       <div className="mb-4">
@@ -1202,7 +1242,7 @@ export default function HomePage() {
                       </div>
 
                       {/* Date */}
-                      <div className="mb-3">
+                      <div className="mb-4">
                         <div className="w-20 h-px bg-white/60 mx-auto mb-2" />
                         <div className="text-sm md:text-base font-semibold">
                           {weddingData ? (language === 'en' ? weddingData.wedding_date : weddingData.wedding_date_ms) : t.date}
@@ -1212,104 +1252,17 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Fixed Bottom Section - Invitation Button + Navigation */}
-                  <div className="absolute bottom-0 left-0 right-0 z-20">
-                    {/* Invitation Button Section */}
-                    <div className="px-4 pb-3 bg-gradient-to-t from-black/40 to-transparent">
-                      <div className="text-center">
-                        <button
-                          onClick={() => setShowInvitation(true)}
-                          className="bg-white/95 backdrop-blur-sm text-green-800 px-5 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center space-x-2 border border-green-200/50 text-sm"
-                          style={{ WebkitTapHighlightColor: 'transparent' }}
-                        >
-                          <InvitationIcon />
-                          <span className="font-medium">{t.viewInvitation}</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Bottom Navigation Bar */}
-                    <div className="px-4 pb-4 pt-2 bg-gradient-to-t from-black/50 to-transparent">
-                      {/* Floating navigation container */}
-                      <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden" style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}>
-                        {/* Subtle Islamic top accent */}
-                        <div className="h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent"></div>
-                        
-                        {/* Subtle pattern overlay */}
-                        <div className="absolute inset-0 opacity-[0.015]">
-                          <div className="absolute inset-0" style={{
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23166534'%3E%3Ccircle cx='15' cy='15' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
-                          }}></div>
-                        </div>
-                        
-                        {/* Navigation buttons - 5 columns */}
-                        <div className="relative grid grid-cols-5 gap-0.5 px-1 py-2">
-                          {/* Calendar */}
-                          <button
-                            onClick={() => openModal('calendar')}
-                            className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                          >
-                            <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
-                              <CalendarIcon />
-                            </div>
-                            <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
-                              {t.calendar}
-                            </span>
-                          </button>
-
-                          {/* Contact */}
-                          <button
-                            onClick={() => openModal('contact')}
-                            className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                          >
-                            <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
-                              <ContactIcon />
-                            </div>
-                            <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
-                              {t.contact}
-                            </span>
-                          </button>
-
-                          {/* Location */}
-                          <button
-                            onClick={() => openModal('location')}
-                            className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                          >
-                            <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
-                              <LocationIcon />
-                            </div>
-                            <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
-                              {t.location}
-                            </span>
-                          </button>
-
-                          {/* RSVP */}
-                          <button
-                            onClick={() => openModal('rsvp')}
-                            className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                          >
-                            <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
-                              <RSVPIcon />
-                            </div>
-                            <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
-                              {t.rsvp}
-                            </span>
-                          </button>
-
-                          {/* Gift */}
-                          <button
-                            onClick={() => openModal('gift')}
-                            className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
-                          >
-                            <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
-                              <GiftIcon />
-                            </div>
-                            <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
-                              {t.gift}
-                            </span>
-                          </button>
-                        </div>
-                      </div>
+                  {/* Invitation Button Section - Fixed above bottom bar */}
+                  <div className="relative z-20 px-4 pb-4">
+                    <div className="text-center">
+                      <button
+                        onClick={() => setShowInvitation(true)}
+                        className="bg-white/95 backdrop-blur-sm text-green-800 px-5 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center space-x-2 border border-green-200/50 text-sm"
+                        style={{ WebkitTapHighlightColor: 'transparent' }}
+                      >
+                        <InvitationIcon />
+                        <span className="font-medium">{t.viewInvitation}</span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1325,9 +1278,9 @@ export default function HomePage() {
           }`}
         >
           {/* Invitation Card Content */}
-          <div className="w-full h-full bg-white relative flex flex-col">
+          <div className="w-full h-full bg-white relative flex flex-col ios-safe-area android-safe-area">
             {/* Back Button */}
-            <div className="flex-shrink-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-3" style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}>
+            <div className="flex-shrink-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-3">
               <button
                 onClick={() => setShowInvitation(false)}
                 className="flex items-center space-x-2 text-green-700 hover:text-green-800 transition-colors"
@@ -1344,6 +1297,92 @@ export default function HomePage() {
                   <InvitationCard weddingData={weddingData} language={language} t={t} />
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Fixed Bottom Navigation Bar - Always visible */}
+      <div className={`bottom-navigation ${showInvitation ? 'hidden' : 'block'}`}>
+        <div className="px-4 pb-4 pt-2 bg-gradient-to-t from-black/40 to-transparent ios-bottom-bar android-bottom-bar">
+          {/* Floating navigation container */}
+          <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg shadow-black/10 border border-green-100/30 relative overflow-hidden">
+            {/* Subtle Islamic top accent */}
+            <div className="h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent"></div>
+            
+            {/* Subtle pattern overlay */}
+            <div className="absolute inset-0 opacity-[0.015]">
+              <div className="absolute inset-0" style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23166534'%3E%3Ccircle cx='15' cy='15' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
+              }}></div>
+            </div>
+            
+            {/* Navigation buttons - Now 5 columns */}
+            <div className="relative grid grid-cols-5 gap-0.5 px-1 py-2">
+              {/* Calendar */}
+              <button
+                onClick={() => openModal('calendar')}
+                className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+              >
+                <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
+                  <CalendarIcon />
+                </div>
+                <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
+                  {t.calendar}
+                </span>
+              </button>
+
+              {/* Contact */}
+              <button
+                onClick={() => openModal('contact')}
+                className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+              >
+                <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
+                  <ContactIcon />
+                </div>
+                <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
+                  {t.contact}
+                </span>
+              </button>
+
+              {/* Location */}
+              <button
+                onClick={() => openModal('location')}
+                className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+              >
+                <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
+                  <LocationIcon />
+                </div>
+                <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
+                  {t.location}
+                </span>
+              </button>
+
+              {/* RSVP */}
+              <button
+                onClick={() => openModal('rsvp')}
+                className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+              >
+                <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
+                  <RSVPIcon />
+                </div>
+                <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
+                  {t.rsvp}
+                </span>
+              </button>
+
+              {/* Gift */}
+              <button
+                onClick={() => openModal('gift')}
+                className="flex flex-col items-center space-y-0.5 p-1 rounded-xl hover:bg-green-50/80 transition-all duration-200 group active:scale-95"
+              >
+                <div className="text-green-700 group-hover:text-green-800 group-hover:scale-105 transition-all duration-200 text-lg">
+                  <GiftIcon />
+                </div>
+                <span className="text-[0.625rem] font-medium text-green-700 group-hover:text-green-800">
+                  {t.gift}
+                </span>
+              </button>
             </div>
           </div>
         </div>
