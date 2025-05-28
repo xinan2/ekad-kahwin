@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Quicksand, Pinyon_Script } from "next/font/google";
+import { Quicksand, Italianno } from "next/font/google";
 import "./globals.css";
 
 const quicksand = Quicksand({
@@ -8,8 +8,8 @@ const quicksand = Quicksand({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const pinyonScript = Pinyon_Script({
-  variable: "--font-pinyon-script",
+const italianno = Italianno({
+  variable: "--font-italianno",
   subsets: ["latin"],
   weight: ["400"],
 });
@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${quicksand.variable} ${pinyonScript.variable}`}>
+      <body className={`${quicksand.variable} ${italianno.variable}`}>
         {children}
       </body>
     </html>

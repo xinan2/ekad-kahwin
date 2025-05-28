@@ -1187,11 +1187,11 @@ export default function HomePage() {
                         </div>
                       ) : (
                         <>
-                          <h1 className="text-5xl md:text-6xl font-script font-semibold mb-2 text-green-100 leading-tight">
+                          <h1 className="text-5xl md:text-6xl font-script mb-2 text-green-100 leading-tight">
                             {weddingData?.groom_name || t.defaultGroomName}
                           </h1>
                           <div className="text-3xl md:text-4xl mb-2 opacity-80 font-script">&</div>
-                          <h1 className="text-5xl md:text-6xl font-script font-semibold text-green-100 leading-tight">
+                          <h1 className="text-5xl md:text-6xl font-script text-green-100 leading-tight">
                             {weddingData?.bride_name || t.defaultBrideName}
                           </h1>
                         </>
