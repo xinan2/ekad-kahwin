@@ -17,6 +17,11 @@ const corinthia = Corinthia({
 export const metadata: Metadata = {
   title: "Walimatul Urus",
   description: "Wedding Invitation - Walimatul Urus",
+  icons: {
+    icon: "/islam-crescent-icon.svg",
+    shortcut: "/islam-crescent-icon.svg",
+    apple: "/islam-crescent-icon.svg",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
