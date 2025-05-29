@@ -12,5 +12,9 @@ export default async function RSVPListPage() {
   // Get current user
   const user = await adminAuth.getCurrentUser();
 
-  return <RSVPListComponent user={user} />;
+  return (
+    <div className="h-screen overflow-y-auto overflow-x-hidden">
+      <RSVPListComponent user={user} />
+    </div>
+  );
 } 

@@ -23,7 +23,11 @@ export default async function AdminPage() {
       username: currentUser.username
     };
     
-    return <AdminDashboard user={user} />;
+    return (
+      <div className="h-screen overflow-y-auto overflow-x-hidden">
+        <AdminDashboard user={user} />
+      </div>
+    );
   } catch (error) {
     console.error('Admin page error:', error);
     redirect('/admin/login');
