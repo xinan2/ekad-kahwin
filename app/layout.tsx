@@ -15,12 +15,12 @@ const corinthia = Corinthia({
 });
 
 export const metadata: Metadata = {
-  title: "Walimatul Urus - Ahmad Adam & Dr. Hawa",
-  description: "Wedding Invitation - Ahmad Adam & Dr. Hawa - December 27th, 2025",
+  title: "Walimatul Urus",
+  description: "Wedding Invitation - Walimatul Urus",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Wedding Invitation",
+    title: "Walimatul Urus",
   },
 };
 
