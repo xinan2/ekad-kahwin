@@ -41,7 +41,7 @@ export default function RSVPListComponent({ user }: RSVPListComponentProps) {
   const fetchRSVPData = async () => {
     setIsLoadingRSVPs(true);
     try {
-      const response = await fetch('/api/rsvp');
+      const response = await fetch('/api/admin/rsvp');
       const data = await response.json();
       
       if (data.success) {
